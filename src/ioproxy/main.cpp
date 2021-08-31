@@ -12,6 +12,22 @@ void initLogging()
 	fac.registerAppender(new ConsoleAppender());
 }
 
+//bool argumentsFromFile(const QString& filePath, QStringList& arguments)
+//{
+//	QFile f(filePath);
+//	if (!f.exists())
+//	{
+//		return false;
+//	}
+//
+//	if (!f.open(QIODevice::ReadOnly))
+//	{
+//		return false;
+//	}
+//
+//	auto data = f.readAll();
+//}
+
 /*
 	Command line arguments idea.
 	--io text --id text1 --params text="hello world"&interval_ms=500

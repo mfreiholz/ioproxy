@@ -40,7 +40,7 @@ public:
 	{
 		m_counter = 0;
 		QObject::connect(&m_timer, &QTimer::timeout, this, &TextIO::onTimer);
-		m_timer.setInterval(std::chrono::milliseconds(500));
+		m_timer.setInterval(std::chrono::milliseconds(m_options.intervalMS));
 		m_timer.start();
 		emit ready();
 	}
