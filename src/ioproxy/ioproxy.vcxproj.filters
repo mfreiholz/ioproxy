@@ -54,6 +54,9 @@
     <QtMoc Include="TcpServerIO.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="SerialPortIO.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.hpp">

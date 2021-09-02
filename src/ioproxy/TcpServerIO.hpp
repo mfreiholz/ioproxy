@@ -1,5 +1,4 @@
 #pragma once
-#include "Global.hpp"
 #include "IOBase.hpp"
 #include <QHostAddress>
 #include <QTcpServer>
@@ -50,10 +49,10 @@ public:
 
 		if (!m_server.listen(bindAddress, m_options.bindPort))
 		{
-			emit errorOccured(QString("Can not listen: %1").arg(m_server.errorString()));
+			emit startupErrorOccured(QString("Can not listen: %1").arg(m_server.errorString()));
 			return;
 		}
-		emit ready();
+		emit started();
 	}
 
 	void stop() override
@@ -72,28 +71,34 @@ public:
 	{
 		for (auto sock : m_sockets)
 		{
-			sock->write(data);
+			auto written = sock->write(data);
+			if (written != data.size())
+			{
+				emit errorOccured(QString("writtenBytes (%1) != data.size (%2); remote=%3:%4")
+									  .arg(written)
+									  .arg(data.size())
+									  .arg(sock->peerAddress().toString())
+									  .arg(sock->peerPort()));
+			}
 		}
 	}
 
 private slots:
-	void onServerAcceptError(QAbstractSocket::SocketError)
+	void onServerAcceptError(QAbstractSocket::SocketError socketError)
 	{
-		HL_ERROR(LL, QString("Can not accept socket: %1").arg(m_server.errorString()).toStdString());
+		emit errorOccured(QString("Can not accept socket. %1 %2").arg(socketError).arg(m_server.errorString()));
 	}
 
 	void onServerNewConnection()
 	{
 		auto sock = m_server.nextPendingConnection();
 		if (!sock)
-		{
-			HL_ERROR(LL, "No pending connections");
 			return;
-		}
 
 		// do not allow more than "maxConnections" connections
 		if (m_sockets.size() >= m_options.maxConnections)
 		{
+			emit errorOccured(QString("Refuse incoming connection from %1:%2 (max-connections=%3)").arg(sock->peerAddress().toString()).arg(sock->peerPort()).arg(m_options.maxConnections));
 			sock->abort();
 			delete sock;
 			sock = nullptr;
@@ -120,13 +125,15 @@ private slots:
 	void onSocketErrorOccured(QAbstractSocket::SocketError)
 	{
 		auto sock = qobject_cast<QTcpSocket*>(sender());
-		HL_ERROR(LL, "TcpServerIO::onSocketErrorOccured");
+		emit errorOccured(QString("Error for connection from %1:%2 (%3)")
+							  .arg(sock->peerAddress().toString())
+							  .arg(sock->peerPort())
+							  .arg(sock->errorString()));
 	}
 
 	void onSocketDisconnected()
 	{
 		auto sock = qobject_cast<QTcpSocket*>(sender());
-		HL_ERROR(LL, "TcpServerIO::onSocketDisconnected");
 		m_sockets.removeOne(sock);
 		sock->deleteLater();
 	}

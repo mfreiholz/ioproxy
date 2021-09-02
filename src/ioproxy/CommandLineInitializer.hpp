@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "FileWriterIO.hpp"
+#include "SerialPortIO.hpp"
 #include "StdOutIO.hpp"
 #include "TcpServerIO.hpp"
 #include "TcpSocketIO.hpp"
@@ -83,20 +84,25 @@ public:
 					auto io = std::make_shared<TcpServerIO>();
 					ioHandler = std::make_shared<IOHandler>(io);
 				}
+				else if (val == "serialport")
+				{
+					auto io = std::make_shared<SerialPortIO>();
+					ioHandler = std::make_shared<IOHandler>(io);
+				}
 				else
 				{
-					std::cerr << "Unknown type after --io" << std::endl;
+					std::cerr << "Unknown type after -io" << std::endl;
 					return false;
 				}
 			}
-			else if (val == "-id" && ioHandler)
+			else if (val == "-name" && ioHandler)
 			{
 				if (!next(val))
 				{
-					std::cerr << "Missing value after --id" << std::endl;
+					std::cerr << "Missing value after -name" << std::endl;
 					return false;
 				}
-				ioHandler->setId(val);
+				ioHandler->io->setUniqueName(val);
 			}
 			else if (val == "-p" && ioHandler)
 			{
@@ -189,7 +195,7 @@ protected:
 
 	void setOptions(std::shared_ptr<IOHandler> h, const QMap<QString, QString>& params)
 	{
-		if (auto io = std::dynamic_pointer_cast<TextIO>(h->io()); io)
+		if (auto io = std::dynamic_pointer_cast<TextIO>(h->io); io)
 		{
 			TextIO::Options options;
 			options.text = params.value("text");
@@ -199,12 +205,12 @@ protected:
 			options.lineBreak = params.value("linebreak", "0").toInt() != 0;
 			io->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<StdOutIO>(h->io()); io)
+		else if (auto io = std::dynamic_pointer_cast<StdOutIO>(h->io); io)
 		{
 			StdOutIO::Options options;
 			io->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<FileWriterIO>(h->io()); io)
+		else if (auto io = std::dynamic_pointer_cast<FileWriterIO>(h->io); io)
 		{
 			FileWriterIO::Options options;
 			options.filePath = params.value("file", "");
@@ -212,7 +218,7 @@ protected:
 			options.immediate = params.value("immediate", "0").toInt() != 0;
 			io->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<UdpSocketIO>(h->io()); io)
+		else if (auto io = std::dynamic_pointer_cast<UdpSocketIO>(h->io); io)
 		{
 			UdpSocketIO::Options options;
 			if (params.contains("bind_address"))
@@ -239,7 +245,7 @@ protected:
 
 			io->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<TcpSocketIO>(h->io()); io)
+		else if (auto io = std::dynamic_pointer_cast<TcpSocketIO>(h->io); io)
 		{
 			TcpSocketIO::Options options;
 			options.remoteAddress = QHostAddress(params.value("remote_address"));
@@ -247,12 +253,18 @@ protected:
 			options.reconnect = true;
 			io->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<TcpServerIO>(h->io()); io)
+		else if (auto io = std::dynamic_pointer_cast<TcpServerIO>(h->io); io)
 		{
 			TcpServerIO::Options options;
 			options.bindAddress = QHostAddress(params.value("bind_address"));
 			options.bindPort = params.value("bind_port").toUShort();
 			options.maxConnections = params.value("max_clients", "1").toUInt();
+			io->setOptions(options);
+		}
+		else if (auto io = std::dynamic_pointer_cast<SerialPortIO>(h->io); io)
+		{
+			SerialPortIO::Options options;
+			options.portID = params.value("port");
 			io->setOptions(options);
 		}
 	}

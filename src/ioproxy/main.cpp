@@ -1,48 +1,39 @@
 #include "App.hpp"
 #include "AppContext.hpp"
 #include "CommandLineInitializer.hpp"
+#include <QSerialPortInfo>
 #include <QtCore/QCoreApplication>
 #include <humblelogging/humblelogging.h>
+#include <iostream>
 
 void initLogging()
 {
 	using namespace humble::logging;
 	Factory& fac = Factory::getInstance();
+	fac.setDefaultFormatter(new PatternFormatter("%date\t%lls\t%m\n"));
 	fac.setConfiguration(new SimpleConfiguration(LogLevel::All));
 	fac.registerAppender(new ConsoleAppender());
 }
 
-//bool argumentsFromFile(const QString& filePath, QStringList& arguments)
-//{
-//	QFile f(filePath);
-//	if (!f.exists())
-//	{
-//		return false;
-//	}
-//
-//	if (!f.open(QIODevice::ReadOnly))
-//	{
-//		return false;
-//	}
-//
-//	auto data = f.readAll();
-//}
+void printSerialPorts()
+{
+	auto portInfos = QSerialPortInfo::availablePorts();
+	for (auto portInfo : portInfos)
+	{
+		std::cout << portInfo.portName().toStdString() << std::endl;
+	}
+}
 
-/*
-	Command line arguments idea.
-	--io text --id text1 --params text="hello world"&interval_ms=500
-	--io stdout --id stdout1
-	--io udpsocket --id udp1 --params bind_address=127.0.0.1&bind_port=13371&remote_address=127.0.0.1&remote_port=13372
-	--io udpsocket --id udp2 --params bind_address=127.0.0.1&bind_port=13372&remote_address=127.0.0.1&remote_port=13371
-	--connect=text1,udp1
-	--connect=text1,udp2
-	--connect=udp1,stdout1
-	--connect=udp2,stdout1
-*/
 int main(int argc, char* argv[])
 {
 	QCoreApplication a(argc, argv);
 	initLogging();
+
+	if (a.arguments().size() >= 2 && a.arguments()[1] == "serialports")
+	{
+		printSerialPorts();
+		return 0;
+	}
 
 	AppContext context;
 
@@ -50,8 +41,9 @@ int main(int argc, char* argv[])
 	if (!cmdInit.init(context))
 		return -1;
 
-
 	App app(context);
-	app.startAll();
+	QObject::connect(&app, &App::abort, &a, &QCoreApplication::quit);
+	QMetaObject::invokeMethod(&app, &App::startAll, Qt::QueuedConnection);
+
 	return a.exec();
 }

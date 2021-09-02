@@ -114,6 +114,7 @@
     <QtMoc Include="IOHandler.hpp" />
     <ClInclude Include="Global.hpp" />
     <QtMoc Include="TcpServerIO.hpp" />
+    <QtMoc Include="SerialPortIO.hpp" />
     <ClInclude Include="Util.hpp" />
     <QtMoc Include="TcpSocketIO.hpp" />
     <QtMoc Include="UdpSocketIO.hpp" />

@@ -41,10 +41,10 @@ public:
 		m_file.setFileName(m_options.filePath);
 		if (!m_file.open(m))
 		{
-			emit errorOccured(m_file.errorString());
+			emit startupErrorOccured(QString("%1 %2").arg(m_file.errorString()).arg(m_options.filePath));
 			return;
 		}
-		emit ready();
+		emit started();
 	}
 
 	void stop() override
@@ -57,12 +57,18 @@ public:
 	{
 		if (!m_file.isOpen())
 		{
-			HL_ERROR(LL, m_file.errorString().toStdString());
+			emit errorOccured(QString("File not open."));
 			return;
 		}
-		m_file.write(data);
-		if (m_options.immediate)
-			m_file.flush();
+		auto bytesWritten = m_file.write(data);
+		if (bytesWritten != data.size())
+		{
+			emit errorOccured(QString("bytesWritten (%1) != data.size (%2)").arg(bytesWritten).arg(data.size()));
+		}
+		if (m_options.immediate && !m_file.flush())
+		{
+			emit errorOccured(QString("Can not flush (immediate write) to file. %1").arg(m_file.errorString()));
+		}
 	}
 
 private:

@@ -42,7 +42,7 @@ public:
 		QObject::connect(&m_timer, &QTimer::timeout, this, &TextIO::onTimer);
 		m_timer.setInterval(std::chrono::milliseconds(m_options.intervalMS));
 		m_timer.start();
-		emit ready();
+		emit started();
 	}
 
 	void stop() override

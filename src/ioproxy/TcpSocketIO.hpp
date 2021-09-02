@@ -18,8 +18,8 @@ public:
 		bool reconnect = false;
 	};
 
-	TcpSocketIO(QObject* parent = nullptr)
-		: IOBase(parent)
+	TcpSocketIO()
+		: IOBase()
 	{}
 
 	~TcpSocketIO() override
@@ -35,7 +35,7 @@ public:
 	void start()
 	{
 		connectToRemote();
-		emit ready();
+		emit started();
 	}
 
 	void stop()
@@ -55,7 +55,16 @@ public:
 			HL_ERROR(LL, "Socket not connected yet");
 			return;
 		}
-		m_socket->write(data);
+
+		auto written = m_socket->write(data);
+		if (written != data.size())
+		{
+			emit errorOccured(QString("writtenBytes (%1) != data.size (%2); remote=%3:%4")
+								  .arg(written)
+								  .arg(data.size())
+								  .arg(m_socket->peerAddress().toString())
+								  .arg(m_socket->peerPort()));
+		}
 	}
 
 protected:
@@ -73,17 +82,18 @@ protected:
 private slots:
 	void onSocketConnected()
 	{
-		HL_INFO(LL, "onSocketConnected");
 	}
 
 	void onSocketDisconnected()
 	{
-		HL_INFO(LL, "onSocketDisconnected");
 	}
 
 	void onSocketErrorOccured(QAbstractSocket::SocketError)
 	{
-		HL_INFO(LL, "onSocketErrorOccured");
+		emit errorOccured(QString("Error for connection to %1:%2 (%3)")
+							  .arg(m_options.remoteAddress.toString())
+							  .arg(m_options.remotePort)
+							  .arg(m_socket->errorString()));
 		if (m_options.reconnect)
 		{
 			reconnect();

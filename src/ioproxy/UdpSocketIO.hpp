@@ -82,7 +82,7 @@ public:
 			const auto groupPort = multicastGroupPort(m_options);
 			if (!m_socket->bind(bindAddress, groupPort))
 			{
-				emit errorOccured(QString("Can't bind local socket: %1:%2 (Qt-error=%3)").arg(bindAddress.toString()).arg(QString::number(groupPort)).arg(m_socket->errorString()));
+				emit startupErrorOccured(QString("Can't bind local socket: %1:%2 (Qt-error=%3)").arg(bindAddress.toString()).arg(QString::number(groupPort)).arg(m_socket->errorString()));
 				return;
 			}
 
@@ -90,7 +90,7 @@ public:
 			const auto groupAddress = multicastGroupAddress(m_options);
 			if ((iface.has_value() && !m_socket->joinMulticastGroup(groupAddress, iface.value())) || !m_socket->joinMulticastGroup(groupAddress))
 			{
-				emit errorOccured(QString("Can't join multicast group: %1 (Qt-error=%2)").arg(groupAddress.toString()).arg(m_socket->errorString()));
+				emit startupErrorOccured(QString("Can't join multicast group: %1 (Qt-error=%2)").arg(groupAddress.toString()).arg(m_socket->errorString()));
 				return;
 			}
 		}
@@ -107,7 +107,7 @@ public:
 			const auto bindPort = std::clamp(m_options.bindPort, static_cast<uint16_t>(0), std::numeric_limits<uint16_t>::max());
 			if (!m_socket->bind(bindAddress, bindPort))
 			{
-				emit errorOccured(QString("Can't bind local socket: %1:%2 (Qt-error=%3)").arg(bindAddress.toString()).arg(QString::number(bindPort)).arg(m_socket->errorString()));
+				emit startupErrorOccured(QString("Can't bind local socket: %1:%2 (Qt-error=%3)").arg(bindAddress.toString()).arg(QString::number(bindPort)).arg(m_socket->errorString()));
 				return;
 			}
 		}
@@ -117,7 +117,7 @@ public:
 		QObject::connect(m_socket.get(), &QUdpSocket::errorOccurred, this, &UdpSocketIO::onSocketErrorOccurred);
 		QObject::connect(m_socket.get(), &QUdpSocket::proxyAuthenticationRequired, this, &UdpSocketIO::onSocketProxyAuthenticationRequired);
 		QObject::connect(m_socket.get(), &QUdpSocket::readyRead, this, &UdpSocketIO::onReadyRead);
-		emit ready();
+		emit started();
 	}
 
 	void stop() override

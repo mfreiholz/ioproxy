@@ -27,7 +27,7 @@ public:
 
 	void start() override
 	{
-		emit ready();
+		emit started();
 	}
 
 	void stop() override
