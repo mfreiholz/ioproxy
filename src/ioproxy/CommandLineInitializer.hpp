@@ -271,6 +271,36 @@ protected:
 		{
 			SerialPortIO::Options options;
 			options.portID = params.value("port");
+
+			if (auto it = params.find("baudrate"); it != params.end())
+			{
+				options.baudrate = it.value().toUInt();
+			}
+			else if (it = params.find("databits"); it != params.end())
+			{
+				options.databits = static_cast<QSerialPort::DataBits>(it->toInt());
+			}
+			else if (it = params.find("parity"); it != params.end())
+			{
+			}
+			else if (it = params.find("stopbits"); it != params.end())
+			{
+			}
+			else if (it = params.find("flow"); it != params.end())
+			{
+				switch (it.value().toUInt())
+				{
+					case 0:
+						options.flowControl = QSerialPort::FlowControl::NoFlowControl;
+						break;
+					case 1:
+						options.flowControl = QSerialPort::FlowControl::HardwareControl;
+						break;
+					case 2:
+						options.flowControl = QSerialPort::FlowControl::SoftwareControl;
+						break;
+				}
+			}
 			io->setOptions(options);
 		}
 	}
