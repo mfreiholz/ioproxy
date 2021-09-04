@@ -243,6 +243,12 @@ protected:
 				options.remoteAddresses.push_back(std::make_pair(addr, port));
 			}
 
+			if (params.contains("multicast_ttl"))
+			{
+				options.multicastTTL = params.value("multicast_ttl").toUShort();
+			}
+			options.multicastLoopback = params.value("multicast_loopback", "0").toUShort() != 0;
+
 			io->setOptions(options);
 		}
 		else if (auto io = std::dynamic_pointer_cast<TcpSocketIO>(h->io); io)

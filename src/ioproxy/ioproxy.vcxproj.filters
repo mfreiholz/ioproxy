@@ -80,4 +80,15 @@
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="serialportreader.bat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="serialports.bat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="udp_multicast.bat">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

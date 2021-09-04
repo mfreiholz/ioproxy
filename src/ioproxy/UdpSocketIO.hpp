@@ -36,6 +36,9 @@ public:
 
 		// Allow multiple remote
 		std::vector<std::pair<QHostAddress, uint16_t>> remoteAddresses;
+
+		std::optional<uint16_t> multicastTTL;
+		bool multicastLoopback = false;
 	};
 
 public:
@@ -63,6 +66,8 @@ public:
 		// multicast
 		if (isMulticastConfig(m_options))
 		{
+			bindAddress = QHostAddress::AnyIPv4;
+
 			// check for IPv4 or IPv6
 			if (m_options.bindAddress.has_value() && !m_options.bindAddress.value().isNull())
 			{
@@ -78,19 +83,51 @@ public:
 				}
 			}
 
+			HL_INFO(LL, QString("iface=%1").arg(iface ? iface->humanReadableName() : "n/A").toStdString());
+			HL_INFO(LL, QString("bind=%1").arg(bindAddress.toString()).toStdString());
+
 			// bind socket
 			const auto groupPort = multicastGroupPort(m_options);
-			if (!m_socket->bind(bindAddress, groupPort))
+			if (!m_socket->bind(bindAddress, groupPort, QUdpSocket::ReuseAddressHint | QUdpSocket::ShareAddress))
 			{
 				emit startupErrorOccured(QString("Can't bind local socket: %1:%2 (Qt-error=%3)").arg(bindAddress.toString()).arg(QString::number(groupPort)).arg(m_socket->errorString()));
 				return;
 			}
 
+			// loopback on/off?
+			m_socket->setSocketOption(QAbstractSocket::MulticastLoopbackOption, m_options.multicastLoopback ? 1 : 0);
+
+			// tll allows to reach other networks via gateways
+			if (m_options.multicastTTL)
+				m_socket->setSocketOption(QAbstractSocket::MulticastTtlOption, m_options.multicastTTL.value());
+
+			// set outgoing multicast iface
+			if (iface)
+				m_socket->setMulticastInterface(iface.value());
+
 			// join multicast group
 			const auto groupAddress = multicastGroupAddress(m_options);
-			if ((iface.has_value() && !m_socket->joinMulticastGroup(groupAddress, iface.value())) || !m_socket->joinMulticastGroup(groupAddress))
+
+			// try to join on specific iface, before falling back on default iface.
+			bool joinOnIfaceFailed = false;
+			if (iface)
 			{
-				emit startupErrorOccured(QString("Can't join multicast group: %1 (Qt-error=%2)").arg(groupAddress.toString()).arg(m_socket->errorString()));
+				if (!m_socket->joinMulticastGroup(groupAddress, iface.value()))
+				{
+					HL_WARN(LL, QString("Can not join multicast on iface. group=%1; iface=%2; detail=%3")
+									.arg(groupAddress.toString())
+									.arg(iface->humanReadableName())
+									.arg(m_socket->errorString())
+									.toStdString());
+					joinOnIfaceFailed = true;
+				}
+			}
+
+			if ((!iface || joinOnIfaceFailed) && !m_socket->joinMulticastGroup(groupAddress))
+			{
+				emit startupErrorOccured(QString("Can not join multicast on default iface. group=%1; detail=%2")
+											 .arg(groupAddress.toString())
+											 .arg(m_socket->errorString()));
 				return;
 			}
 		}
@@ -176,28 +213,28 @@ protected:
 		return std::clamp(options.remoteAddresses.at(0).second, static_cast<uint16_t>(1), std::numeric_limits<uint16_t>::max());
 	}
 
-private:
-	Q_SLOT void onSocketConnected()
+private slots:
+	void onSocketConnected()
 	{
 		HL_INFO(LL, "Connected");
 	}
 
-	Q_SLOT void onSocketDisconnected()
+	void onSocketDisconnected()
 	{
 		HL_INFO(LL, "Disconnected");
 	}
 
-	Q_SLOT void onSocketErrorOccurred(QAbstractSocket::SocketError)
+	void onSocketErrorOccurred(QAbstractSocket::SocketError)
 	{
 		emit errorOccured(m_socket->errorString());
 	}
 
-	Q_SLOT void onSocketProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)
+	void onSocketProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)
 	{
 		HL_INFO(LL, "Socket requires proxy authentication (not supported yet)");
 	}
 
-	Q_SLOT void onReadyRead()
+	void onReadyRead()
 	{
 		while (m_socket->hasPendingDatagrams())
 		{
