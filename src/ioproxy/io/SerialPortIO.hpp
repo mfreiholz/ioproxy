@@ -1,6 +1,6 @@
 #pragma once
-#include "Global.hpp"
-#include "IOBase.hpp"
+#include "../Global.hpp"
+#include "../IOBase.hpp"
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
@@ -15,7 +15,7 @@ public:
 		int baudrate = QSerialPort::Baud115200;
 		QSerialPort::DataBits databits = QSerialPort::Data8;
 		QSerialPort::Parity parity = QSerialPort::NoParity;
-		QSerialPort::StopBits stopbits = QSerialPort::UnknownStopBits;
+		QSerialPort::StopBits stopbits = QSerialPort::OneStop;
 		QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
 		bool breakEnabled = false;
 		bool dtr = false;

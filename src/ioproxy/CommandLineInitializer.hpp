@@ -1,17 +1,16 @@
 #pragma once
 #include "AppContext.hpp"
 #include "IOHandler.hpp"
+#include "io/FileWriterIO.hpp"
+#include "io/SerialPortIO.hpp"
+#include "io/StdOutIO.hpp"
+#include "io/TcpServerIO.hpp"
+#include "io/TcpSocketIO.hpp"
+#include "io/TextIO.hpp"
+#include "io/UdpSocketIO.hpp"
 #include <QMultiMap>
 #include <QStringList>
 #include <iostream>
-
-#include "FileWriterIO.hpp"
-#include "SerialPortIO.hpp"
-#include "StdOutIO.hpp"
-#include "TcpServerIO.hpp"
-#include "TcpSocketIO.hpp"
-#include "TextIO.hpp"
-#include "UdpSocketIO.hpp"
 
 /*
 	Command line arguments idea.
@@ -195,7 +194,7 @@ protected:
 
 	void setOptions(std::shared_ptr<IOHandler> h, const QMap<QString, QString>& params)
 	{
-		if (auto io = std::dynamic_pointer_cast<TextIO>(h->io); io)
+		if (auto textIO = std::dynamic_pointer_cast<TextIO>(h->io); textIO)
 		{
 			TextIO::Options options;
 			options.text = params.value("text");
@@ -203,22 +202,22 @@ protected:
 			options.withCounter = params.value("counter", "0").toInt() != 0;
 			options.withTime = params.value("datetime", "0").toInt() != 0;
 			options.lineBreak = params.value("linebreak", "0").toInt() != 0;
-			io->setOptions(options);
+			textIO->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<StdOutIO>(h->io); io)
+		else if (auto stdOutIO = std::dynamic_pointer_cast<StdOutIO>(h->io); stdOutIO)
 		{
 			StdOutIO::Options options;
-			io->setOptions(options);
+			stdOutIO->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<FileWriterIO>(h->io); io)
+		else if (auto fileWriterIO = std::dynamic_pointer_cast<FileWriterIO>(h->io); fileWriterIO)
 		{
 			FileWriterIO::Options options;
 			options.filePath = params.value("file", "");
 			options.append = params.value("append", "0").toInt() != 0;
 			options.immediate = params.value("immediate", "0").toInt() != 0;
-			io->setOptions(options);
+			fileWriterIO->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<UdpSocketIO>(h->io); io)
+		else if (auto udpSocketIO = std::dynamic_pointer_cast<UdpSocketIO>(h->io); udpSocketIO)
 		{
 			UdpSocketIO::Options options;
 			if (params.contains("bind_address"))
@@ -249,25 +248,25 @@ protected:
 			}
 			options.multicastLoopback = params.value("multicast_loopback", "0").toUShort() != 0;
 
-			io->setOptions(options);
+			udpSocketIO->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<TcpSocketIO>(h->io); io)
+		else if (auto tcpSocketIO = std::dynamic_pointer_cast<TcpSocketIO>(h->io); tcpSocketIO)
 		{
 			TcpSocketIO::Options options;
 			options.remoteAddress = QHostAddress(params.value("remote_address"));
 			options.remotePort = params.value("remote_port").toUShort();
 			options.reconnect = true;
-			io->setOptions(options);
+			tcpSocketIO->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<TcpServerIO>(h->io); io)
+		else if (auto tcpServerIO = std::dynamic_pointer_cast<TcpServerIO>(h->io); tcpServerIO)
 		{
 			TcpServerIO::Options options;
 			options.bindAddress = QHostAddress(params.value("bind_address"));
 			options.bindPort = params.value("bind_port").toUShort();
 			options.maxConnections = params.value("max_clients", "1").toUInt();
-			io->setOptions(options);
+			tcpServerIO->setOptions(options);
 		}
-		else if (auto io = std::dynamic_pointer_cast<SerialPortIO>(h->io); io)
+		else if (auto serialPortIO = std::dynamic_pointer_cast<SerialPortIO>(h->io); serialPortIO)
 		{
 			SerialPortIO::Options options;
 			options.portID = params.value("port");
@@ -301,7 +300,7 @@ protected:
 						break;
 				}
 			}
-			io->setOptions(options);
+			serialPortIO->setOptions(options);
 		}
 	}
 };

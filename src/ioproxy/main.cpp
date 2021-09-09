@@ -6,6 +6,17 @@
 #include <humblelogging/humblelogging.h>
 #include <iostream>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
+void initConsole()
+{
+#ifdef WIN32
+	AllocConsole();
+#endif
+}
+
 void initLogging()
 {
 	using namespace humble::logging;
@@ -27,6 +38,7 @@ void printSerialPorts()
 int main(int argc, char* argv[])
 {
 	QCoreApplication a(argc, argv);
+	//initConsole();
 	initLogging();
 
 	if (a.arguments().size() >= 2 && a.arguments()[1] == "serialports")

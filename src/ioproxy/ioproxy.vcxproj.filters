@@ -17,6 +17,9 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="io">
+      <UniqueIdentifier>{111fdd26-d434-473e-ae5b-fb1c27cd5e50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -25,37 +28,52 @@
     <ClCompile Include="Util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="io\WebSocketServerIO.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\WebSocketClientIO.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\WebSocketHandler.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="StdOutIO.hpp">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="UdpSocketIO.hpp">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="TcpSocketIO.hpp">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="App.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="IOBase.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="FileWriterIO.hpp">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="TextIO.hpp">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="IOHandler.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="TcpServerIO.hpp">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="io\WebSocketServerIO.hpp">
+      <Filter>io</Filter>
     </QtMoc>
-    <QtMoc Include="SerialPortIO.hpp">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="io\WebSocketClientIO.hpp">
+      <Filter>io</Filter>
+    </QtMoc>
+    <QtMoc Include="io\FileWriterIO.hpp">
+      <Filter>io</Filter>
+    </QtMoc>
+    <QtMoc Include="io\SerialPortIO.hpp">
+      <Filter>io</Filter>
+    </QtMoc>
+    <QtMoc Include="io\StdOutIO.hpp">
+      <Filter>io</Filter>
+    </QtMoc>
+    <QtMoc Include="io\TcpServerIO.hpp">
+      <Filter>io</Filter>
+    </QtMoc>
+    <QtMoc Include="io\TcpSocketIO.hpp">
+      <Filter>io</Filter>
+    </QtMoc>
+    <QtMoc Include="io\TextIO.hpp">
+      <Filter>io</Filter>
+    </QtMoc>
+    <QtMoc Include="io\UdpSocketIO.hpp">
+      <Filter>io</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -74,21 +92,8 @@
     <ClInclude Include="Global.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="README.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="serialportreader.bat">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="serialports.bat">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="udp_multicast.bat">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClInclude Include="io\WebSocketHandler.hpp">
+      <Filter>io</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

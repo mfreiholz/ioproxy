@@ -100,6 +100,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="io\WebSocketClientIO.cpp" />
+    <ClCompile Include="io\WebSocketHandler.cpp" />
+    <ClCompile Include="io\WebSocketServerIO.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
@@ -107,28 +110,23 @@
     <QtMoc Include="App.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="FileWriterIO.hpp" />
     <ClInclude Include="AppContext.hpp" />
     <ClInclude Include="CommandLineInitializer.hpp" />
-    <QtMoc Include="TextIO.hpp" />
     <QtMoc Include="IOHandler.hpp" />
     <ClInclude Include="Global.hpp" />
-    <QtMoc Include="TcpServerIO.hpp" />
-    <QtMoc Include="SerialPortIO.hpp" />
+    <QtMoc Include="io\WebSocketServerIO.hpp" />
+    <QtMoc Include="io\WebSocketClientIO.hpp" />
+    <QtMoc Include="io\FileWriterIO.hpp" />
+    <QtMoc Include="io\SerialPortIO.hpp" />
+    <QtMoc Include="io\StdOutIO.hpp" />
+    <QtMoc Include="io\TcpServerIO.hpp" />
+    <QtMoc Include="io\TcpSocketIO.hpp" />
+    <QtMoc Include="io\TextIO.hpp" />
+    <QtMoc Include="io\UdpSocketIO.hpp" />
+    <ClInclude Include="io\WebSocketHandler.hpp" />
     <ClInclude Include="Util.hpp" />
-    <QtMoc Include="TcpSocketIO.hpp" />
-    <QtMoc Include="UdpSocketIO.hpp" />
     <QtMoc Include="IOBase.hpp" />
-    <QtMoc Include="StdOutIO.hpp" />
     <ClInclude Include="IOFactory.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="README.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="serialportreader.bat" />
-    <None Include="serialports.bat" />
-    <None Include="udp_multicast.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

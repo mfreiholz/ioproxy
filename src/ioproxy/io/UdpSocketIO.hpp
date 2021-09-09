@@ -1,7 +1,7 @@
 #pragma once
-#include "Global.hpp"
-#include "IOBase.hpp"
-#include "Util.hpp"
+#include "../Global.hpp"
+#include "../IOBase.hpp"
+#include "../Util.hpp"
 #include <QAuthenticator>
 #include <QHostAddress>
 #include <QNetworkDatagram>

@@ -1,6 +1,6 @@
 #pragma once
-#include "Global.hpp"
-#include "IOBase.hpp"
+#include "../Global.hpp"
+#include "../IOBase.hpp"
 #include <QHostAddress>
 #include <QTcpSocket>
 #include <QTimer>
@@ -52,7 +52,6 @@ public:
 	{
 		if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState)
 		{
-			HL_ERROR(LL, "Socket not connected yet");
 			return;
 		}
 
@@ -82,6 +81,7 @@ protected:
 private slots:
 	void onSocketConnected()
 	{
+		HL_INFO(LL, QString("Connected to remote %1:%2").arg(m_options.remoteAddress.toString()).arg(m_options.remotePort).toStdString());
 	}
 
 	void onSocketDisconnected()

@@ -1,5 +1,5 @@
 #pragma once
-#include "IOBase.hpp"
+#include "../IOBase.hpp"
 #include <iostream>
 
 class StdOutIO : public IOBase

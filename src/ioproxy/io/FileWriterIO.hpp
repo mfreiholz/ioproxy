@@ -1,6 +1,6 @@
 #pragma once
-#include "Global.hpp"
-#include "IOBase.hpp"
+#include "../Global.hpp"
+#include "../IOBase.hpp"
 #include <QFile>
 #include <QObject>
 #include <QString>
