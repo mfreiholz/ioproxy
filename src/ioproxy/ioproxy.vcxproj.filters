@@ -20,6 +20,9 @@
     <Filter Include="io">
       <UniqueIdentifier>{111fdd26-d434-473e-ae5b-fb1c27cd5e50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="os">
+      <UniqueIdentifier>{f5870f0c-a692-4005-8957-c947dcd93214}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -28,14 +31,17 @@
     <ClCompile Include="Util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="io\WebSocketServerIO.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
     <ClCompile Include="io\WebSocketClientIO.cpp">
       <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="io\WebSocketHandler.cpp">
       <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Signals.cpp">
+      <Filter>os</Filter>
+    </ClCompile>
+    <ClCompile Include="os\WindowsSignalHandler.cpp">
+      <Filter>os</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +100,15 @@
     </ClInclude>
     <ClInclude Include="io\WebSocketHandler.hpp">
       <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="os\Signals.hpp">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="os\WindowsSignalHandler.hpp">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="os\ServiceRunner.hpp">
+      <Filter>os</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

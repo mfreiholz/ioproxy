@@ -11,7 +11,7 @@ public:
 	~WebSocketClientIO() override;
 	void start() override;
 	void stop() override;
-	void writeData(const QByteArray& data) override;
+	void writeData(const DataPack& data) override;
 
 private:
 	class P;

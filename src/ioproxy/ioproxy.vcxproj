@@ -37,7 +37,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>msvc2019-x64</QtInstall>
-    <QtModules>core</QtModules>
+    <QtModules>core;network;bluetooth;serialport;websockets;concurrent</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -65,12 +65,13 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>"D:\Projects\HumbleLogging\Source\humblelogging\build\Debug\humblelogging.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"D:\Projects\HumbleLogging\Source\humblelogging\build_debug\Debug\humblelogging.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories);D:\Projects\LibMUL-CPP\Sources\libmul;D:\Projects\HumbleLogging\Source\humblelogging\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -102,8 +103,9 @@
   <ItemGroup>
     <ClCompile Include="io\WebSocketClientIO.cpp" />
     <ClCompile Include="io\WebSocketHandler.cpp" />
-    <ClCompile Include="io\WebSocketServerIO.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="os\Signals.cpp" />
+    <ClCompile Include="os\WindowsSignalHandler.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +126,9 @@
     <QtMoc Include="io\TextIO.hpp" />
     <QtMoc Include="io\UdpSocketIO.hpp" />
     <ClInclude Include="io\WebSocketHandler.hpp" />
+    <ClInclude Include="os\ServiceRunner.hpp" />
+    <ClInclude Include="os\Signals.hpp" />
+    <ClInclude Include="os\WindowsSignalHandler.hpp" />
     <ClInclude Include="Util.hpp" />
     <QtMoc Include="IOBase.hpp" />
     <ClInclude Include="IOFactory.hpp" />

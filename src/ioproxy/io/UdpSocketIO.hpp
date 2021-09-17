@@ -167,7 +167,7 @@ public:
 		}
 	}
 
-	void writeData(const QByteArray& data) override
+	void writeData(const DataPack& data) override
 	{
 		if (m_socket->state() != QAbstractSocket::BoundState)
 		{
@@ -177,7 +177,7 @@ public:
 		// multicast
 		if (isMulticastConfig(m_options))
 		{
-			const auto bytesWritten = m_socket->writeDatagram(data, multicastGroupAddress(m_options), multicastGroupPort(m_options));
+			const auto bytesWritten = m_socket->writeDatagram(data.bytes, multicastGroupAddress(m_options), multicastGroupPort(m_options));
 			if (bytesWritten < 0)
 			{
 				HL_ERROR(LL, "Can't write bytes over socket");
@@ -188,7 +188,7 @@ public:
 		{
 			for (const auto& addr : m_options.remoteAddresses)
 			{
-				const auto bytesWritten = m_socket->writeDatagram(data, addr.first, addr.second);
+				const auto bytesWritten = m_socket->writeDatagram(data.bytes, addr.first, addr.second);
 				if (bytesWritten < 0)
 				{
 					HL_ERROR(LL, "Can't write bytes over socket");
@@ -239,6 +239,11 @@ private slots:
 		while (m_socket->hasPendingDatagrams())
 		{
 			const QNetworkDatagram dgram = m_socket->receiveDatagram();
+
+			DataPack data(dgram.data());
+			data.fixedSize = data.bytes.size();
+			data.parameters.insert("sender_address", dgram.senderAddress().toString());
+			data.parameters.insert("sender_port", dgram.senderPort());
 			emit newData(dgram.data());
 		}
 	}

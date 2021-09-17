@@ -28,7 +28,7 @@ public:
 	}
 
 private slots:
-	void onNewData(const QByteArray& data)
+	void onNewData(const DataPack& data)
 	{
 		auto num = m_targets.size();
 		for (auto i = 0; i < num; i++)

@@ -53,17 +53,17 @@ public:
 			m_file.close();
 	}
 
-	void writeData(const QByteArray& data) override
+	void writeData(const DataPack& data) override
 	{
 		if (!m_file.isOpen())
 		{
 			emit errorOccured(QString("File not open."));
 			return;
 		}
-		auto bytesWritten = m_file.write(data);
-		if (bytesWritten != data.size())
+		auto bytesWritten = m_file.write(data.bytes);
+		if (bytesWritten != data.bytes.size())
 		{
-			emit errorOccured(QString("bytesWritten (%1) != data.size (%2)").arg(bytesWritten).arg(data.size()));
+			emit errorOccured(QString("bytesWritten (%1) != data.size (%2)").arg(bytesWritten).arg(data.bytes.size()));
 		}
 		if (m_options.immediate && !m_file.flush())
 		{

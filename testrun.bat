@@ -8,7 +8,7 @@ goto tcp_client
 
 :tcp_udp_server
 %EXEC% ^
-	-io tcpserver -name tcpserver -p bind_port=13370 ^
+	-io tcpserver -name tcpserver -p bind_port=13370 -p broadcast_clients=1 -p max_clients=10 ^
 	-io udpsocket -name udpsocket -p bind_address=127.0.0.1 -p bind_port=13370 ^
 	-io stdout -name stdout ^
 	--connect tcpserver,stdout ^
@@ -17,7 +17,7 @@ pause
 
 :tcp_client
 %EXEC% ^
-	-io text -name text -p "text=data(tcp)" -p interval=250 -p linebreak=1 -p counter=1 -p datetime=1 ^
+	-io text -name text -p "text=data(tcp)" -p interval=25 -p linebreak=1 -p counter=1 -p datetime=1 ^
 	-io tcpsocket -name tcpsocket -p remote_address=127.0.0.1 -p remote_port=13370 ^
 	--connect text,tcpsocket
 pause

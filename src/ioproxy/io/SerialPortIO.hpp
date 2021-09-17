@@ -107,18 +107,18 @@ public:
 		m_port.close();
 	}
 
-	void writeData(const QByteArray& data) override
+	void writeData(const DataPack& data) override
 	{
 		if (!m_port.isOpen())
 		{
 			return;
 		}
-		auto written = m_port.write(data);
-		if (written != data.size())
+		auto written = m_port.write(data.bytes);
+		if (written != data.bytes.size())
 		{
 			emit errorOccured(QString("writtenBytes (%1) != data.size (%2); port=%3")
 								  .arg(written)
-								  .arg(data.size())
+								  .arg(data.bytes.size())
 								  .arg(m_port.portName()));
 		}
 	}

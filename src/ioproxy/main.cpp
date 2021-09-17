@@ -1,6 +1,8 @@
 #include "App.hpp"
 #include "AppContext.hpp"
 #include "CommandLineInitializer.hpp"
+#include "IOBase.hpp"
+#include <QMetaType>
 #include <QSerialPortInfo>
 #include <QtCore/QCoreApplication>
 #include <humblelogging/humblelogging.h>
@@ -26,6 +28,11 @@ void initLogging()
 	fac.registerAppender(new ConsoleAppender());
 }
 
+void initMetaTypes()
+{
+	qRegisterMetaType<DataPack>("DataPack");
+}
+
 void printSerialPorts()
 {
 	auto portInfos = QSerialPortInfo::availablePorts();
@@ -40,6 +47,7 @@ int main(int argc, char* argv[])
 	QCoreApplication a(argc, argv);
 	//initConsole();
 	initLogging();
+	initMetaTypes();
 
 	if (a.arguments().size() >= 2 && a.arguments()[1] == "serialports")
 	{
@@ -55,6 +63,7 @@ int main(int argc, char* argv[])
 
 	App app(context);
 	QObject::connect(&app, &App::abort, &a, &QCoreApplication::quit);
+	QObject::connect(&app, &App::signalQuit, &a, &QCoreApplication::quit);
 	QMetaObject::invokeMethod(&app, &App::startAll, Qt::QueuedConnection);
 
 	return a.exec();

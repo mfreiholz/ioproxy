@@ -34,9 +34,9 @@ public:
 	{
 	}
 
-	void writeData(const QByteArray& data) override
+	void writeData(const DataPack& data) override
 	{
-		QString str(data);
+		QString str(data.bytes);
 		auto s = str.toStdString();
 		std::cout << s;
 	}

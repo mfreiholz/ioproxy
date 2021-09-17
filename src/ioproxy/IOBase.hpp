@@ -1,9 +1,38 @@
 #pragma once
 #include <QByteArray>
+#include <QList>
 #include <QMap>
 #include <QObject>
 #include <QString>
 #include <QVariant>
+#include <cinttypes>
+
+class DataPack
+{
+public:
+	DataPack()
+	{}
+
+	DataPack(const DataPack& other)
+	{
+		bytes = other.bytes;
+		fixedSize = other.fixedSize;
+		timestamps = other.timestamps;
+		parameters = other.parameters;
+	}
+
+	DataPack(const QByteArray& data_)
+		: bytes(data_)
+	{}
+
+	~DataPack() = default;
+
+	QByteArray bytes;
+	int fixedSize = 0;
+	QList<int64_t> timestamps;
+	QMap<QString, QVariant> parameters;
+};
+Q_DECLARE_METATYPE(DataPack);
 
 /*!
 	Base object for all types that can input/output data.
@@ -43,13 +72,13 @@ public:
 public slots:
 	virtual void start() = 0;
 	virtual void stop() = 0;
-	virtual void writeData(const QByteArray&) {}
+	virtual void writeData(const DataPack&) {}
 
 signals:
 	void started(); ///< Emitted if start was successful
 	void startupErrorOccured(const QString& errorString); ///< Emitted if start failed
 
-	void newData(const QByteArray& data);
+	void newData(const DataPack& data);
 	void errorOccured(const QString& errorMessage);
 
 protected:

@@ -264,6 +264,7 @@ protected:
 			options.bindAddress = QHostAddress(params.value("bind_address"));
 			options.bindPort = params.value("bind_port").toUShort();
 			options.maxConnections = params.value("max_clients", "1").toUInt();
+			options.broadcast = params.value("broadcast_clients", "0").toUInt() == 1;
 			tcpServerIO->setOptions(options);
 		}
 		else if (auto serialPortIO = std::dynamic_pointer_cast<SerialPortIO>(h->io); serialPortIO)

@@ -13,13 +13,17 @@ class TcpServerIO : public IOBase
 public:
 	struct Options
 	{
-		QHostAddress bindAddress;
-		uint16_t bindPort;
+		QHostAddress bindAddress = QHostAddress::Any;
+		uint16_t bindPort = 0;
 
 		// Maximum number of parallel connections
 		// It doesn't make sense to have more than one connection sending data to this server.
 		// Data from "newData()" signal would get mixed up.
 		int maxConnections = 1;
+
+		// If `true` all incoming data gets broadcasted to all other clients.
+		// @todo Note: What about applying filter?
+		bool broadcast = false;
 	};
 
 	TcpServerIO()
@@ -67,23 +71,28 @@ public:
 		m_sockets.clear();
 	}
 
-	void writeData(const QByteArray& data) override
+	void writeData(const DataPack& data) override
 	{
 		for (auto sock : m_sockets)
 		{
-			auto written = sock->write(data);
-			if (written != data.size())
-			{
-				emit errorOccured(QString("writtenBytes (%1) != data.size (%2); remote=%3:%4")
-									  .arg(written)
-									  .arg(data.size())
-									  .arg(sock->peerAddress().toString())
-									  .arg(sock->peerPort()));
-			}
+			writeSocket(sock, data);
 		}
 	}
 
 private slots:
+	void writeSocket(QTcpSocket* sock, const DataPack& data)
+	{
+		auto written = sock->write(data.bytes);
+		if (written != data.bytes.size())
+		{
+			emit errorOccured(QString("writtenBytes (%1) != data.size (%2); remote=%3:%4")
+								  .arg(written)
+								  .arg(data.bytes.size())
+								  .arg(sock->peerAddress().toString())
+								  .arg(sock->peerPort()));
+		}
+	}
+
 	void onServerAcceptError(QAbstractSocket::SocketError socketError)
 	{
 		emit errorOccured(QString("Can not accept socket. %1 %2").arg(socketError).arg(m_server.errorString()));
@@ -117,7 +126,16 @@ private slots:
 		auto sock = qobject_cast<QTcpSocket*>(sender());
 		if (sock->bytesAvailable())
 		{
-			auto data = sock->read(sock->bytesAvailable());
+			DataPack data(sock->read(sock->bytesAvailable()));
+			if (m_options.broadcast)
+			{
+				for (int i = 0; i < m_sockets.size(); ++i)
+				{
+					if (m_sockets[i] == sock)
+						continue;
+					writeSocket(m_sockets[i], data);
+				}
+			}
 			emit newData(data);
 		}
 	}

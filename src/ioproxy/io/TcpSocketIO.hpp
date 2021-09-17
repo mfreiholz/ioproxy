@@ -48,19 +48,19 @@ public:
 		}
 	}
 
-	void writeData(const QByteArray& data) override
+	void writeData(const DataPack& data) override
 	{
 		if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState)
 		{
 			return;
 		}
 
-		auto written = m_socket->write(data);
-		if (written != data.size())
+		auto written = m_socket->write(data.bytes);
+		if (written != data.bytes.size())
 		{
 			emit errorOccured(QString("writtenBytes (%1) != data.size (%2); remote=%3:%4")
 								  .arg(written)
-								  .arg(data.size())
+								  .arg(data.bytes.size())
 								  .arg(m_socket->peerAddress().toString())
 								  .arg(m_socket->peerPort()));
 		}

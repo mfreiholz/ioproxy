@@ -22,6 +22,6 @@ void WebSocketClientIO::stop()
 {
 }
 
-void WebSocketClientIO::writeData(const QByteArray&)
+void WebSocketClientIO::writeData(const DataPack&)
 {
 }
