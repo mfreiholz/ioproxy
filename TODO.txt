@@ -1,0 +1,2 @@
+- [ ] Print statistics and stats to console.
+- [ ] Refactor to use CMake files.

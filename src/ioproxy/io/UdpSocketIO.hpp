@@ -67,6 +67,7 @@ public:
 		if (isMulticastConfig(m_options))
 		{
 			bindAddress = QHostAddress::AnyIPv4;
+			const auto groupPort = m_options.bindPort;
 
 			// check for IPv4 or IPv6
 			if (m_options.bindAddress.has_value() && !m_options.bindAddress.value().isNull())
@@ -85,9 +86,9 @@ public:
 
 			HL_INFO(LL, QString("iface=%1").arg(iface ? iface->humanReadableName() : "n/A").toStdString());
 			HL_INFO(LL, QString("bind=%1").arg(bindAddress.toString()).toStdString());
+			HL_INFO(LL, QString("group_port=%1").arg(groupPort).toStdString());
 
 			// bind socket
-			const auto groupPort = multicastGroupPort(m_options);
 			if (!m_socket->bind(bindAddress, groupPort, QUdpSocket::ReuseAddressHint | QUdpSocket::ShareAddress))
 			{
 				emit startupErrorOccured(QString("Can't bind local socket: %1:%2 (Qt-error=%3)").arg(bindAddress.toString()).arg(QString::number(groupPort)).arg(m_socket->errorString()));
@@ -105,30 +106,34 @@ public:
 			if (iface)
 				m_socket->setMulticastInterface(iface.value());
 
-			// join multicast group
-			const auto groupAddress = multicastGroupAddress(m_options);
-
-			// try to join on specific iface, before falling back on default iface.
-			bool joinOnIfaceFailed = false;
-			if (iface)
+			// join all defined multicast addresses
+			for (const auto& pair : m_options.remoteAddresses)
 			{
-				if (!m_socket->joinMulticastGroup(groupAddress, iface.value()))
+				const auto groupAddress = pair.first;
+
+				// try to join on specific iface, before falling back on default iface.
+				bool joinOnIfaceFailed = false;
+				if (iface)
 				{
-					HL_WARN(LL, QString("Can not join multicast on iface. group=%1; iface=%2; detail=%3")
-									.arg(groupAddress.toString())
-									.arg(iface->humanReadableName())
-									.arg(m_socket->errorString())
-									.toStdString());
-					joinOnIfaceFailed = true;
+					if (!m_socket->joinMulticastGroup(groupAddress, iface.value()))
+					{
+						HL_WARN(LL, QString("Can not join multicast on iface. group=%1; iface=%2; detail=%3")
+										.arg(groupAddress.toString())
+										.arg(iface->humanReadableName())
+										.arg(m_socket->errorString())
+										.toStdString());
+						joinOnIfaceFailed = true;
+					}
 				}
-			}
 
-			if ((!iface || joinOnIfaceFailed) && !m_socket->joinMulticastGroup(groupAddress))
-			{
-				emit startupErrorOccured(QString("Can not join multicast on default iface. group=%1; detail=%2")
-											 .arg(groupAddress.toString())
-											 .arg(m_socket->errorString()));
-				return;
+				if ((!iface || joinOnIfaceFailed) && !m_socket->joinMulticastGroup(groupAddress))
+				{
+					emit startupErrorOccured(QString("Can not join multicast on default iface. group=%1; detail=%2")
+												 .arg(groupAddress.toString())
+												 .arg(m_socket->errorString()));
+					return;
+				}
+				HL_INFO(LL, QString("group_address=%1").arg(groupAddress.toString()).toStdString());
 			}
 		}
 		// unicast
@@ -177,7 +182,7 @@ public:
 		// multicast
 		if (isMulticastConfig(m_options))
 		{
-			const auto bytesWritten = m_socket->writeDatagram(data.bytes, multicastGroupAddress(m_options), multicastGroupPort(m_options));
+			const auto bytesWritten = m_socket->writeDatagram(data.bytes, multicastGroupAddress(m_options), m_options.bindPort);
 			if (bytesWritten < 0)
 			{
 				HL_ERROR(LL, "Can't write bytes over socket");
@@ -206,11 +211,6 @@ protected:
 	QHostAddress multicastGroupAddress(const Options& options) const
 	{
 		return options.remoteAddresses.at(0).first;
-	}
-
-	uint16_t multicastGroupPort(const Options& options) const
-	{
-		return std::clamp(options.remoteAddresses.at(0).second, static_cast<uint16_t>(1), std::numeric_limits<uint16_t>::max());
 	}
 
 private slots:

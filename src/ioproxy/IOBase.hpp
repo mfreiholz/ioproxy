@@ -34,6 +34,12 @@ public:
 };
 Q_DECLARE_METATYPE(DataPack);
 
+struct Statistic
+{
+	int64_t bytesRead = 0;
+	int64_t bytesWritten = 0;
+};
+
 /*!
 	Base object for all types that can input/output data.
 	It should always be possible to create an empty stateless object from the specific implementation.
@@ -64,9 +70,9 @@ public:
 		}
 	}
 
-	QString errorString() const
+	const Statistic& statistic() const
 	{
-		return m_errorString;
+		return m_statistic;
 	}
 
 public slots:
@@ -83,5 +89,5 @@ signals:
 
 protected:
 	QString m_uniqueName;
-	QString m_errorString;
+	Statistic m_statistic;
 };

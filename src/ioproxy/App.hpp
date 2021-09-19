@@ -1,18 +1,20 @@
 #pragma once
 #include "AppContext.hpp"
 #include "Global.hpp"
-#include "os/WindowsSignalHandler.hpp"
+#include "os/SignalHandler.hpp"
 #include <QObject>
 #include <memory>
 
-class App : public QObject, public WindowsSignalHandler
+class App
+	: public QObject,
+	  public os::SignalHandler
 {
 	Q_OBJECT
 
 public:
 	App(AppContext& context)
 		: QObject(nullptr)
-		, WindowsSignalHandler(Signals::Defaults)
+		, os::SignalHandler()
 		, m_context(context)
 	{
 		auto& hh = m_context.handlers();
@@ -28,7 +30,7 @@ public:
 	{
 	}
 
-	bool handleSignal(Signals) override
+	bool handleSignal(os::Signal) override
 	{
 		HL_INFO(LL, "Quit on user request");
 		emit signalQuit();

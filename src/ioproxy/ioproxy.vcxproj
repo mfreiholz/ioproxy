@@ -73,6 +73,9 @@
       <AdditionalIncludeDirectories>$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories);D:\Projects\LibMUL-CPP\Sources\libmul;D:\Projects\HumbleLogging\Source\humblelogging\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>"D:\Projects\HumbleLogging\Source\humblelogging\build_release\Release\humblelogging.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -104,8 +107,8 @@
     <ClCompile Include="io\WebSocketClientIO.cpp" />
     <ClCompile Include="io\WebSocketHandler.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="os\Signals.cpp" />
-    <ClCompile Include="os\WindowsSignalHandler.cpp" />
+    <ClCompile Include="os\SignalHandler.linux.cpp" />
+    <ClCompile Include="os\SignalHandler.win32.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -127,11 +130,13 @@
     <QtMoc Include="io\UdpSocketIO.hpp" />
     <ClInclude Include="io\WebSocketHandler.hpp" />
     <ClInclude Include="os\ServiceRunner.hpp" />
-    <ClInclude Include="os\Signals.hpp" />
-    <ClInclude Include="os\WindowsSignalHandler.hpp" />
+    <ClInclude Include="os\SignalHandler.hpp" />
     <ClInclude Include="Util.hpp" />
     <QtMoc Include="IOBase.hpp" />
     <ClInclude Include="IOFactory.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="resources\res.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
