@@ -33,6 +33,7 @@ ioproxy ^
 ## Input/Outputs
 
 ### TCP Server (io=tcpserver)
+
 | Key | Value |
 | --- | ----- |
 | bind_address | IPv4/6 address of network interface (e.g. `0.0.0.0`) |
@@ -40,21 +41,30 @@ ioproxy ^
 | max_clients | Maximum number of accepted client connections. |
 | broadcast_clients | If `1` the server sends packets from one client to all others connected clients. |
 
-### TCP Client
-| Key | Value |
-| --- | ----- |
-| remote_address | ... |
-| remote_port | ... |
+### TCP Socket/Client (io=tcpsocket)
 
-### UDP Socket
 | Key | Value |
 | --- | ----- |
-| remote_address | ... |
-| remote_port | ... |
+| remote_address | IPv4/6 address of the remote machine. |
+| remote_port | Port on which the remote machine is listen for new connections. |
+| reconnect | If `1` the client automatically tries to reconnect, if there is any problem with the connection. |
+
+### UDP Socket (io=udpsocket)
+
+| Key | Note |
+| --- | --- |
+| bind_address | IPv4/IPv6 address of local network interface to bind socket. |
+| bind_port | Port number on which to listen for incoming packets. In multicast mode this is the group-port. |
+| remote_address | IPv4/IPv6 address of remote machine. |
+| remote_port | Port of remote machine. |
+| multicast_ttl | TTL for multicast datagrams. |
+| multicast_loopback | If `1` the loopback for multicast packets is enabled. |
+
+The combination of `remote_address` and `remote_port` can be used multiple times to define more than one destination.
 
 ### Serial Port
-| Key | Value |
-| --- | ----- |
-| port | ... |
-| baudrate | ... |
-| port | ... |
+
+| Key | Note | Default |
+| --- | --- | --- |
+| port | Name of the serial port. Windows: `COM1`, Linux: `/dev/ttyS0` | n/A
+| baudrate | Baudrate to use for this port. | 115200 |
