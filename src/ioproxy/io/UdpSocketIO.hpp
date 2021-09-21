@@ -37,6 +37,9 @@ public:
 		// Allow multiple remote
 		std::vector<std::pair<QHostAddress, uint16_t>> remoteAddresses;
 
+		// Send back received packet to sender
+		bool echo = false;
+
 		std::optional<uint16_t> multicastTTL;
 		bool multicastLoopback = false;
 	};
@@ -239,7 +242,10 @@ private slots:
 		while (m_socket->hasPendingDatagrams())
 		{
 			const QNetworkDatagram dgram = m_socket->receiveDatagram();
-
+			if (m_options.echo)
+			{
+				m_socket->writeDatagram(dgram.data(), dgram.senderAddress(), dgram.senderPort());
+			}
 			DataPack data(dgram.data());
 			data.fixedSize = data.bytes.size();
 			data.parameters.insert("sender_address", dgram.senderAddress().toString());

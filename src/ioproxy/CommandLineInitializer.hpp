@@ -121,7 +121,7 @@ public:
 					params.insert(val.mid(0, pos), val.mid(pos + 1));
 				}
 			}
-			else if (val == "--connect")
+			else if (val == "-connect")
 			{
 				if (!next(val))
 				{

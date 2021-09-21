@@ -29,3 +29,32 @@ ioproxy ^
 -io tcpserver -name tcp_server -p bind_port=5678 -p max_clients=10 ^
 -connect mc_sock,tcp_server
 ```
+
+## Input/Outputs
+
+### TCP Server (io=tcpserver)
+| Key | Value |
+| --- | ----- |
+| bind_address | IPv4/6 address of network interface (e.g. `0.0.0.0`) |
+| bind_port | Port on which to listen for new connections. |
+| max_clients | Maximum number of accepted client connections. |
+| broadcast_clients | If `1` the server sends packets from one client to all others connected clients. |
+
+### TCP Client
+| Key | Value |
+| --- | ----- |
+| remote_address | ... |
+| remote_port | ... |
+
+### UDP Socket
+| Key | Value |
+| --- | ----- |
+| remote_address | ... |
+| remote_port | ... |
+
+### Serial Port
+| Key | Value |
+| --- | ----- |
+| port | ... |
+| baudrate | ... |
+| port | ... |
