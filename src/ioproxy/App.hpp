@@ -41,6 +41,13 @@ public slots:
 	void startAll()
 	{
 		auto& hh = m_context.handlers();
+		if (hh.empty())
+		{
+			HL_ERROR(LL, "Missing IO configuration. At least one IO is required.");
+			emit abort();
+			return;
+		}
+
 		for (int i = 0; i < hh.size() && !m_error; ++i)
 		{
 			hh[i]->io->start();

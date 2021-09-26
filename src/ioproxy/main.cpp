@@ -12,6 +12,8 @@
 #include <Windows.h>
 #endif
 
+HUMBLE_LOGGER(L, "main");
+
 void initConsole()
 {
 #ifdef WIN32
@@ -45,9 +47,16 @@ void printSerialPorts()
 int main(int argc, char* argv[])
 {
 	QCoreApplication a(argc, argv);
+	a.setApplicationName("IOProxy");
+	a.setApplicationVersion("1.0.0");
+	a.setOrganizationName("insaneFactory");
+	a.setOrganizationDomain("https://insanefactory.com");
+
 	//initConsole();
 	initLogging();
 	initMetaTypes();
+
+	HL_INFO(L, QString("%1 - %2").arg(a.applicationName()).arg(a.applicationVersion()).toStdString());
 
 	if (a.arguments().size() >= 2 && a.arguments()[1] == "serialports")
 	{
@@ -56,10 +65,12 @@ int main(int argc, char* argv[])
 	}
 
 	AppContext context;
-
 	CommandLineInitializer cmdInit(a.arguments());
 	if (!cmdInit.init(context))
+	{
+		HL_ERROR(L, "Error during command line initialization.");
 		return -1;
+	}
 
 	App app(context);
 	QObject::connect(&app, &App::abort, &a, &QCoreApplication::quit);
