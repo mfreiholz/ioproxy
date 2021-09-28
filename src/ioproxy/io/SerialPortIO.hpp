@@ -69,30 +69,37 @@ public:
 		}
 		if (!m_port.setBreakEnabled(m_options.breakEnabled))
 		{
+			emit startupErrorOccured(QString("%1 (code=%2)").arg(m_port.errorString()).arg(m_port.error()));
 			return;
 		}
 		if (!m_port.setDataBits(m_options.databits))
 		{
+			emit startupErrorOccured(QString("%1 (code=%2)").arg(m_port.errorString()).arg(m_port.error()));
 			return;
 		}
 		if (!m_port.setDataTerminalReady(m_options.dtr))
 		{
+			emit startupErrorOccured(QString("%1 (code=%2)").arg(m_port.errorString()).arg(m_port.error()));
 			return;
 		}
 		if (!m_port.setFlowControl(m_options.flowControl))
 		{
+			emit startupErrorOccured(QString("%1 (code=%2)").arg(m_port.errorString()).arg(m_port.error()));
 			return;
 		}
 		if (!m_port.setParity(m_options.parity))
 		{
+			emit startupErrorOccured(QString("%1 (code=%2)").arg(m_port.errorString()).arg(m_port.error()));
 			return;
 		}
 		if (!m_port.setStopBits(m_options.stopbits))
 		{
+			emit startupErrorOccured(QString("%1 (code=%2)").arg(m_port.errorString()).arg(m_port.error()));
 			return;
 		}
 		if (!m_port.setRequestToSend(m_options.rts))
 		{
+			emit startupErrorOccured(QString("%1 (code=%2)").arg(m_port.errorString()).arg(m_port.error()));
 			return;
 		}
 		emit started();
@@ -120,7 +127,10 @@ public:
 								  .arg(written)
 								  .arg(data.bytes.size())
 								  .arg(m_port.portName()));
+			return;
 		}
+
+		m_statistic.bytesWritten += written;
 	}
 
 private slots:
@@ -129,6 +139,7 @@ private slots:
 		while (m_port.bytesAvailable())
 		{
 			auto data = m_port.read(m_port.bytesAvailable());
+			m_statistic.bytesRead += data.size();
 			emit newData(data);
 		}
 	}

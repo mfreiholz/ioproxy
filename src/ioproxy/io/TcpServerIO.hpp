@@ -90,7 +90,9 @@ private slots:
 								  .arg(data.bytes.size())
 								  .arg(sock->peerAddress().toString())
 								  .arg(sock->peerPort()));
+			return;
 		}
+		m_statistic.bytesWritten += written;
 	}
 
 	void onServerAcceptError(QAbstractSocket::SocketError socketError)
@@ -136,6 +138,7 @@ private slots:
 					writeSocket(m_sockets[i], data);
 				}
 			}
+			m_statistic.bytesRead += data.bytes.size();
 			emit newData(data);
 		}
 	}

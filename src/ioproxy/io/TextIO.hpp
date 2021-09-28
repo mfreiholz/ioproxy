@@ -75,7 +75,10 @@ private slots:
 		{
 			str.append('\n');
 		}
-		emit newData(QByteArray::fromStdString(str.toStdString()));
+
+		auto bytes = QByteArray::fromStdString(str.toStdString());
+		m_statistic.bytesRead += bytes.size();
+		emit newData(bytes);
 	}
 
 private:

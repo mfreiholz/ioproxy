@@ -242,6 +242,11 @@ protected:
 				options.remoteAddresses.push_back(std::make_pair(addr, port));
 			}
 
+			if (params.contains("echo"))
+			{
+				options.echo = params.value("echo").toUShort() != 0;
+			}
+
 			if (params.contains("multicast_ttl"))
 			{
 				options.multicastTTL = params.value("multicast_ttl").toUShort();
@@ -255,7 +260,9 @@ protected:
 			TcpSocketIO::Options options;
 			options.remoteAddress = QHostAddress(params.value("remote_address"));
 			options.remotePort = params.value("remote_port").toUShort();
-			options.reconnect = true;
+			options.reconnect = params.value("reconnect", "0").toUShort() == 1;
+			options.tcpNoDelayOption = params.value("low_delay", "0").toUShort() == 1;
+			options.tcpKeepAliveOption = params.value("keep_alive", "0").toUShort() == 1;
 			tcpSocketIO->setOptions(options);
 		}
 		else if (auto tcpServerIO = std::dynamic_pointer_cast<TcpServerIO>(h->io); tcpServerIO)

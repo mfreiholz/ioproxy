@@ -39,6 +39,8 @@ public:
 		QString str(data.bytes);
 		auto s = str.toStdString();
 		std::cout << s;
+
+		m_statistic.bytesWritten += str.size();
 	}
 
 private:

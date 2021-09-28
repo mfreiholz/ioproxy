@@ -16,6 +16,13 @@ public:
 		QHostAddress remoteAddress;
 		uint16_t remotePort;
 		bool reconnect = false;
+
+		// If `true` it sets the TCP_NODELAY option on socket.
+		// Disables the Nagle's algorithm.
+		bool tcpNoDelayOption = false;
+
+		// If `true` it sets the SO_KEEPALIVE option on socket.
+		bool tcpKeepAliveOption = false;
 	};
 
 	TcpSocketIO()
@@ -63,6 +70,7 @@ public:
 								  .arg(data.bytes.size())
 								  .arg(m_socket->peerAddress().toString())
 								  .arg(m_socket->peerPort()));
+			return;
 		}
 	}
 
@@ -82,6 +90,10 @@ private slots:
 	void onSocketConnected()
 	{
 		HL_INFO(LL, QString("Connected to remote %1:%2").arg(m_options.remoteAddress.toString()).arg(m_options.remotePort).toStdString());
+		if (m_options.tcpNoDelayOption)
+			m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+		if (m_options.tcpKeepAliveOption)
+			m_socket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
 	}
 
 	void onSocketDisconnected()

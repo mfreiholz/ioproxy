@@ -64,10 +64,15 @@ public:
 		if (bytesWritten != data.bytes.size())
 		{
 			emit errorOccured(QString("bytesWritten (%1) != data.size (%2)").arg(bytesWritten).arg(data.bytes.size()));
+			return;
 		}
+
+		m_statistic.bytesWritten += bytesWritten;
+
 		if (m_options.immediate && !m_file.flush())
 		{
 			emit errorOccured(QString("Can not flush (immediate write) to file. %1").arg(m_file.errorString()));
+			return;
 		}
 	}
 
