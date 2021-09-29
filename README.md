@@ -12,6 +12,24 @@ IOProxy is an input/output proxy. It allows to receive data from different data 
 - ~~HTTP WebSocket Server~~ (upcoming)
 - ~~HTTP WebSocket Client~~ (upcoming)
 
+## How and Why to use it
+The idea behind the program is to provide the possibility to redirect traffic from one source to another.
+
+IOProxy allows to define multiple data-sources, also called IOs.
+Each defined IO can than be connected to one or more other defined IO(s). It lets you define the exact route of in- and outgoing data.
+
+**Example scenarios:**
+- Provide serial-port access via UDP or TCP
+- Forward multicast into another subnet (+over gateway/vpn)
+- Talk to TCP via UDP and vice-versa
+
+### Small illustration example
+Imaging you do have a machine#1 with a device connected to serial-port (COM1). This device sends some kind of status every second.
+In additional there are two computers in the network which wants to know about the status. 
+
+... TODO ...
+
+
 ## Commandline usage
 One process can have multiple IOs.
 ```
