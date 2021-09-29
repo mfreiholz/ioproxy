@@ -1,6 +1,5 @@
 thirdparty/
 build/
-CMakeLists.txt
 
 
 ## Ignore Visual Studio temporary files, build results, and
