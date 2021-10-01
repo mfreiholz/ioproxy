@@ -16,26 +16,61 @@ IOProxy is an input/output proxy. It allows to receive data from different data 
 The idea behind the program is to provide the possibility to redirect traffic from one source to another.
 
 IOProxy allows to define multiple data-sources, also called IOs.
-Each defined IO can than be connected to one or more other defined IO(s). It lets you define the exact route of in- and outgoing data.
+Each defined IO can be connected to one or more other defined IO(s).
+It lets you define the exact route of in- and outgoing data.
 
 **Example scenarios:**
 - Provide serial-port access via UDP or TCP
 - Forward multicast into another subnet (+over gateway/vpn)
-- Talk to TCP via UDP and vice-versa
 
 ### Small illustration example
-Imaging you do have a machine#1 with a device connected to serial-port (COM1). This device sends some kind of status every second.
-In additional there are two computers in the network which wants to know about the status. 
+Imaging you do have a computer (PC-1) with a device connected to serial-port (COM1). This device sends some kind of status every second. In addition there are two computers in the network which wants to know about the status.
 
-... TODO ...
+This problem can be solved by having a process opening the serial-port and provide all data via TCP or UDP to multiple clients.
 
+```
+┌───────────────────────────────────┐              ┌───────────────────────────────────┐
+│ PC-1 with serial-port COM1        │              │ PC-X interested in state          │
+│                                   │              │                                   │
+│ ┌──────────────┐  ┌─────────────┐ │              │ ┌─────────────┐  ┌──────────────┐ │
+│ │-io serialport│  │-io tcpserver│◄├──────────────┼─┤-io tcpsocket│  │-io filewriter│ │
+│ └───────┬──────┘  └─────────────┘ │              │ └───────┬─────┘  └──────────────┘ │
+│         │                 ▲       │              │         │               ▲         │
+│         │     connect     │       │              │         │    connect    │         │
+│         └─────────────────┘       │              │         └───────────────┘         │
+│                                   │              │                                   │
+└───────────────────────────────────┘              └───────────────────────────────────┘
+
+# Command on PC-1
+ioproxy
+	-io serialport -name sport -p port=COM1
+	-io tcpserver -name tcpsrv -p bind_address=192.168.0.10 -p bind_port=1234
+	-connect sport,tcpsrv
+
+# Command on PC-X (can be multiple)
+ioproxy
+	-io tcpsocket -name tcpsock -p remote_address=192.168.0.10 -p remote_port=1234 -p reconnect=1
+	-io filewriter -name fwrite
+	-connect tcpsock,fwrite
+```
+
+# Documentation
 
 ## Commandline usage
-One process can have multiple IOs.
+
 ```
-ioproxy.exe {-io <io> -name <unique-name> [-p <key>=<value> ...] ...}
+ioproxy.exe {-io <io-id> -name <unique-name> [-p <key>=<value> ...] ...}
 [-connect <unique-name-of-source>,<unique-name-of-destination> ...]
 ```
+
+`-io \<io-id>` The ID of the IO to be created.
+
+`-name <unique-name>` Unique name for the last defined `-io`. This string can then be used with the `-connect` parameter.
+
+`-p <key>=<value>` Defines parameter specifically to the previously created IO. See (Input/Output Documentation)[] for available parameters.
+
+`-connect <unique-name-of-source>,<unique-name-of-destination>`
+
 
 ### Examples
 
@@ -56,8 +91,8 @@ Parameters marked with \* (asterix) are required.
 
 | Key | Default | Note |
 | --- | --- | --- |
-| bind_address | `0.0.0.0` + `::` | IPv4/6 address of network interface |
-| bind_port* | n/A | Port on which to listen for new connections. |
+| bind_address | All IPv4/v6 | IPv4/6 address of network interface |
+| bind_port* | n/a | Port on which to listen for new connections. |
 | max_clients | `1` | Maximum number of accepted client connections. |
 | broadcast_clients | `0` | If `1` the server sends packets from one client to all other connected clients. |
 
@@ -83,11 +118,11 @@ Parameters marked with \* (asterix) are required.
 -io tcpsocket -p remote_address=127.0.0.1 -p remote_port=1337 -p reconnect=1 -p low_delay=1
 ```
 
-### UDP Socket (io=udpsocket)
+### UDP Socket (`-io udpsocket`)
 
 | Key | Default | Value |
 | --- | --- | --- |
-| bind_address | `0.0.0.0` | IPv4/IPv6 address of local network interface to bind socket. |
+| bind_address | All IPv4/v6 | IPv4/IPv6 address of local network interface to bind socket. |
 | bind_port | Random | Port number on which to listen for incoming packets. In multicast mode this is the group-port. |
 | remote_address | n/a | IPv4/IPv6 address of remote machine. |
 | remote_port | n/a | Port of remote machine. |
