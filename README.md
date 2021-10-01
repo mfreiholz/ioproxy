@@ -149,7 +149,11 @@ The combination of `remote_address` and `remote_port` can be used multiple times
 
 ### Serial Port
 
-| Key | Note | Default |
+| Key | Default | Value |
 | --- | --- | --- |
-| port | Name of the serial port. Windows: `COM1`, Linux: `/dev/ttyS0` | n/A
-| baudrate | Baudrate to use for this port. | 115200 |
+| port* | n/a | Name of the serial port. Windows: `COM1`, Linux: `/dev/ttyS0` |
+| baudrate | 115200 | Baudrate to use for this port. |
+| databits | `8` | The number of data bits used. |
+| parity | `0` | Parity scheme. 0 = NoParity, 2 = EvenParity, 3 = OddParity, 4 = SpaceParity, 5 = MarkParity |
+| stopbits | `1` | The number of stop bits used. 1 = OneStop; 2 = TwoStop; 3 = OneAndHalfStop; -1 = UnknownStopBits |
+| flow | `0` | 0 = Disabled, 1 = Hardware flow control (RTS/CTS), 2 = Software flow control (XON/XOFF) |

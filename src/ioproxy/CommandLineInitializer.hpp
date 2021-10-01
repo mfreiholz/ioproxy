@@ -289,9 +289,11 @@ protected:
 			}
 			else if (it = params.find("parity"); it != params.end())
 			{
+				options.parity = static_cast<QSerialPort::Parity>(it->toInt());
 			}
 			else if (it = params.find("stopbits"); it != params.end())
 			{
+				options.stopbits = static_cast<QSerialPort::StopBits>(it->toInt());
 			}
 			else if (it = params.find("flow"); it != params.end())
 			{
@@ -307,6 +309,18 @@ protected:
 						options.flowControl = QSerialPort::FlowControl::SoftwareControl;
 						break;
 				}
+			}
+			else if (it = params.find("break"); it != params.end())
+			{
+				options.breakEnabled = it->toUInt() == 1;
+			}
+			else if (it = params.find("dtr"); it != params.end())
+			{
+				options.dtr = it->toUInt() == 1;
+			}
+			else if (it = params.find("rts"); it != params.end())
+			{
+				options.rts = it->toUInt() == 1;
 			}
 			serialPortIO->setOptions(options);
 		}
