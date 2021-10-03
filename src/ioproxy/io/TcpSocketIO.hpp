@@ -81,7 +81,11 @@ protected:
 		m_socket = std::make_unique<QTcpSocket>();
 		QObject::connect(m_socket.get(), &QTcpSocket::connected, this, &TcpSocketIO::onSocketConnected);
 		QObject::connect(m_socket.get(), &QTcpSocket::disconnected, this, &TcpSocketIO::onSocketDisconnected);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+		QObject::connect(m_socket.get(), static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpSocketIO::onSocketErrorOccured);
+#else
 		QObject::connect(m_socket.get(), &QTcpSocket::errorOccurred, this, &TcpSocketIO::onSocketErrorOccured);
+#endif
 		QObject::connect(m_socket.get(), &QTcpSocket::readyRead, this, &TcpSocketIO::onSocketReadyRead);
 		m_socket->connectToHost(m_options.remoteAddress, m_options.remotePort);
 	}

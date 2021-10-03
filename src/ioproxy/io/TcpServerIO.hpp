@@ -3,6 +3,7 @@
 #include <QHostAddress>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QtGlobal>
 #include <cinttypes>
 #include <memory>
 
@@ -118,7 +119,11 @@ private slots:
 
 		// use socket
 		QObject::connect(sock, &QTcpSocket::readyRead, this, &TcpServerIO::onSocketReadyRead);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+		QObject::connect(sock, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpServerIO::onSocketErrorOccured);
+#else
 		QObject::connect(sock, &QTcpSocket::errorOccurred, this, &TcpServerIO::onSocketErrorOccured);
+#endif
 		QObject::connect(sock, &QTcpSocket::disconnected, this, &TcpServerIO::onSocketDisconnected);
 		m_sockets.push_back(sock);
 	}

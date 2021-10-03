@@ -12,7 +12,9 @@ ExternalProject_Add(
 	TEST_COMMAND ""
 )
 ExternalProject_Get_Property(HumbleLogging SOURCE_DIR)
+ExternalProject_Get_Property(HumbleLogging BINARY_DIR)
 message("HumbleLogging SOURCE_DIR = ${SOURCE_DIR}")
+message("HumbleLogging BINARY_DIR = ${BINARY_DIR}")
 
 #ExternalProject_Add_Step(
 #	HumbleLogging CopyToBin
@@ -26,11 +28,11 @@ include_directories(${HumbleLogging_INCLUDE_DIRS})
 
 if(WIN32)
 	set(HumbleLogging_LIBRARIES
-		optimized "${CMAKE_BINARY_DIR}/humblelogging-prefix/src/humblelogging-build/Release/humblelogging.lib"
-		debug "${CMAKE_BINARY_DIR}/humblelogging-prefix/src/humblelogging-build/Debug/humblelogging.lib"
+		optimized "${BINARY_DIR}/Release/humblelogging.lib"
+		debug "${BINARY_DIR}/Debug/humblelogging.lib"
 	)
 else()
 	set(HumbleLogging_LIBRARIES
-		"${CMAKE_BINARY_DIR}/humblelogging-prefix/src/humblelogging-build/libhumblelogging.a"
+		"${BINARY_DIR}/libhumblelogging.a"
 	)
 endif()

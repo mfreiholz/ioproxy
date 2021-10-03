@@ -7,15 +7,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 COMPONENTS Core Network Bluetooth SerialPort WebSockets Concurrent REQUIRED)
+find_package(Qt5 COMPONENTS Core Network SerialPort WebSockets Concurrent REQUIRED)
 
-list(APPEND CMAKE_PROGRAM_PATH  "$ENV{QTDIR}")
+#list(APPEND CMAKE_PROGRAM_PATH  "$ENV{QTDIR}")
 
 set(headers
 	App.hpp
 	AppContext.hpp
 	CommandLineInitializer.hpp
-	CommandLineOutputter.hpp
 	Global.hpp
 	IOBase.hpp
 	IOFactory.hpp
@@ -30,8 +29,8 @@ set(headers
 	io/TcpSocketIO.hpp
 	io/TextIO.hpp
 	io/UdpSocketIO.hpp
-	io/WebSocketClientIO.hpp
-	io/WebSocketServerIO.hpp
+	#io/WebSocketClientIO.hpp
+	#io/WebSocketServerIO.hpp
 
 	# os
 	os/ServiceRunner.hpp
@@ -61,7 +60,6 @@ target_link_libraries(
 	${PROJECT_NAME}
 	Qt5::Core
 	Qt5::Network
-	Qt5::Bluetooth
 	Qt5::SerialPort
 	Qt5::WebSockets
 	Qt5::Concurrent
@@ -71,13 +69,15 @@ add_dependencies(${PROJECT_NAME} HumbleLogging)
 add_dependencies(${PROJECT_NAME} LibMUL)
 
 # Installation
-get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
-get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
-find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
-find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
+if(WIN32)
+	get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+	get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
+	find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
+	find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
 
-add_custom_command(
-	TARGET ${PROJECT_NAME} POST_BUILD
-	COMMAND "${CMAKE_COMMAND}" -E env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:${PROJECT_NAME}>"
-	COMMENT "Running windeployqt..."
-)
+	add_custom_command(
+		TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND "${CMAKE_COMMAND}" -E env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:${PROJECT_NAME}>"
+		COMMENT "Running windeployqt..."
+	)
+endif(WIN32)

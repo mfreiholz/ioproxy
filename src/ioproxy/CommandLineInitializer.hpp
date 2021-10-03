@@ -160,11 +160,6 @@ public:
 	}
 
 protected:
-	bool current(QString& value)
-	{
-		value = m_args[m_index];
-	}
-
 	bool hasNext()
 	{
 		return m_args.size() > (m_index + 1);

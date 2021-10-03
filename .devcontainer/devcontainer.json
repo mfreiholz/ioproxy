@@ -1,0 +1,9 @@
+{
+	"name": "IOProxy (devcontainer for WSL2)",
+	"dockerFile": "Dockerfile",
+	"extensions": [
+		"ms-vscode.cpptools",
+		"ms-vscode.cmake-tools"
+	],
+	"mounts": []
+}

@@ -159,7 +159,11 @@ public:
 
 		QObject::connect(m_socket.get(), &QUdpSocket::connected, this, &UdpSocketIO::onSocketConnected);
 		QObject::connect(m_socket.get(), &QUdpSocket::disconnected, this, &UdpSocketIO::onSocketDisconnected);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+		QObject::connect(m_socket.get(), static_cast<void (QUdpSocket::*)(QAbstractSocket::SocketError)>(&QUdpSocket::error), this, &UdpSocketIO::onSocketErrorOccurred);
+#else
 		QObject::connect(m_socket.get(), &QUdpSocket::errorOccurred, this, &UdpSocketIO::onSocketErrorOccurred);
+#endif
 		QObject::connect(m_socket.get(), &QUdpSocket::proxyAuthenticationRequired, this, &UdpSocketIO::onSocketProxyAuthenticationRequired);
 		QObject::connect(m_socket.get(), &QUdpSocket::readyRead, this, &UdpSocketIO::onReadyRead);
 		emit started();
