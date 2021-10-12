@@ -30,7 +30,8 @@ set(headers
 	io/TextIO.hpp
 	io/UdpSocketIO.hpp
 	#io/WebSocketClientIO.hpp
-	#io/WebSocketServerIO.hpp
+	io/WebSocketHandler.hpp
+	io/WebSocketServerIO.hpp
 
 	# os
 	os/ServiceRunner.hpp

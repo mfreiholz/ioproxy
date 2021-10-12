@@ -52,7 +52,6 @@ int main(int argc, char* argv[])
 	a.setOrganizationName("insaneFactory");
 	a.setOrganizationDomain("https://insanefactory.com");
 
-	//initConsole();
 	initLogging();
 	initMetaTypes();
 

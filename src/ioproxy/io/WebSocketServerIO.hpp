@@ -15,10 +15,16 @@ public:
 		TextMode
 	};
 
+	enum class DataHandling
+	{
+		//ByFrame, // Handles all incoming data by single frames.
+		ByMessage // Handles all incoming data by complete messages.
+	};
+
 	struct Options
 	{
-		QHostAddress bindAddress;
-		quint16 bindPort;
+		QHostAddress bindAddress = QHostAddress::Any;
+		quint16 bindPort = 0;
 
 		// Maximum number of parallel connections
 		// It doesn't make sense to have more than one connection sending data to this server.
@@ -29,7 +35,8 @@ public:
 		// @todo Note: What about applying filter?
 		bool broadcast = false;
 
-		DataMode dataMode = DataMode::BinaryMode;
+		DataMode writeDataMode = DataMode::BinaryMode;
+		DataHandling dataHandling = DataHandling::ByMessage;
 	};
 
 	WebSocketServerIO()
@@ -90,7 +97,7 @@ private slots:
 	void writeSocket(QWebSocket* sock, const DataPack& data)
 	{
 		qint64 written = 0;
-		switch (m_options.dataMode)
+		switch (m_options.writeDataMode)
 		{
 			case DataMode::BinaryMode:
 				written = sock->sendBinaryMessage(data.bytes);
@@ -106,7 +113,9 @@ private slots:
 								  .arg(data.bytes.size())
 								  .arg(sock->peerAddress().toString())
 								  .arg(sock->peerPort()));
+			return;
 		}
+		m_statistic.bytesWritten += written;
 	}
 
 	void onServerAcceptError(QAbstractSocket::SocketError socketError)
@@ -131,26 +140,65 @@ private slots:
 		}
 
 		// use socket
-		//QObject::connect(sock, &QWebSocket::readyRead, this, &TcpServerIO::onSocketReadyRead);
-		//QObject::connect(sock, &QWebSocket::error, this, &WebSocketServerIO::onSocketErrorOccured);
-		//QObject::connect(sock, &QWebSocket::disconnected, this, &TcpServerIO::onSocketDisconnected);
+		QObject::connect(sock, &QWebSocket::binaryMessageReceived, this, &WebSocketServerIO::onBinaryMessageReceived);
+		QObject::connect(sock, &QWebSocket::textMessageReceived, this, &WebSocketServerIO::onTextMessageReceived);
+		QObject::connect(sock, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), this, &WebSocketServerIO::onSocketError);
+		QObject::connect(sock, &QWebSocket::disconnected, this, &WebSocketServerIO::onSocketDisconnected);
 		m_sockets.push_back(sock);
 	}
 
-	void onBinaryFrameReceived(const QByteArray& frame, bool isLastFrame)
-	{}
+	//void onBinaryFrameReceived(const QByteArray& frame, bool isLastFrame)
+	//{
+	//	DataPack dp;
+	//	dp.bytes = frame;
+	//	dp.fixedSize = frame.size();
+	//	dp.parameters.insert("isLastFrame", isLastFrame);
+
+	//	m_statistic.bytesRead += frame.size();
+	//	emit newData(dp);
+	//}
 
 	void onBinaryMessageReceived(const QByteArray& message)
-	{}
+	{
+		m_statistic.bytesRead += message.size();
+		emit newData(message);
+	}
 
 	void onPong(quint64 elapsedTime, const QByteArray& payload)
 	{}
 
-	void onTextFrameReceived(const QString& frame, bool isLastFrame)
-	{}
+	//void onTextFrameReceived(const QString& frame, bool isLastFrame)
+	//{
+	//	DataPack dp;
+	//	dp.bytes = frame.toUtf8();
+	//	dp.fixedSize = dp.bytes.size();
+	//	dp.parameters.insert("isLastFrame", isLastFrame);
+
+	//	m_statistic.bytesRead += frame.size();
+	//	emit newData(dp);
+	//}
 
 	void onTextMessageReceived(const QString& message)
-	{}
+	{
+		m_statistic.bytesRead += message.size();
+		emit newData(message.toUtf8());
+	}
+
+	void onSocketError(QAbstractSocket::SocketError error)
+	{
+		auto sock = qobject_cast<QWebSocket*>(sender());
+		emit errorOccured(QString("Error for connection from %1:%2 (%3)")
+							  .arg(sock->peerAddress().toString())
+							  .arg(sock->peerPort())
+							  .arg(sock->errorString()));
+	}
+
+	void onSocketDisconnected()
+	{
+		auto sock = qobject_cast<QWebSocket*>(sender());
+		m_sockets.removeOne(sock);
+		sock->deleteLater();
+	}
 
 private:
 	Options m_options;

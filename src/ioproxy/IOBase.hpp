@@ -2,6 +2,7 @@
 #include <QByteArray>
 #include <QList>
 #include <QMap>
+#include <QMetaType>
 #include <QObject>
 #include <QString>
 #include <QVariant>

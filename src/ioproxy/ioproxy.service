@@ -1,0 +1,9 @@
+[Unit]
+Description=IOProxy
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/ioproxy
+
+[Install]
+WantedBy=multi-user.target
