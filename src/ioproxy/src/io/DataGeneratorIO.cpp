@@ -1,6 +1,6 @@
-#include "DataGeneratorIO.hpp"
 #include <QRandomGenerator>
 #include <chrono>
+#include <ioproxy/io/DataGeneratorIO.hpp>
 
 DataGeneratorIO::DataGeneratorIO()
 	: IOBase()

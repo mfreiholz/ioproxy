@@ -1,18 +1,18 @@
-#include "App.hpp"
-#include "AppContext.hpp"
-#include "CommandLineInitializer.hpp"
-#include "IOBase.hpp"
 #include <QMetaType>
 #include <QSerialPortInfo>
 #include <QtCore/QCoreApplication>
 #include <humblelogging/humblelogging.h>
+#include <ioproxy/App.hpp>
+#include <ioproxy/AppContext.hpp>
+#include <ioproxy/CommandLineInitializer.hpp>
+#include <ioproxy/IOBase.hpp>
 #include <iostream>
 
 #ifdef _WIN32
 #include <Windows.h>
 #endif
 
-HUMBLE_LOGGER(L, "main");
+HUMBLE_LOGGER(L, "ioproxy-cli");
 
 void initConsole()
 {

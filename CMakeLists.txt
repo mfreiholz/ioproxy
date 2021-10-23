@@ -15,3 +15,4 @@ include(cmake/LibMUL.thirdparty.cmake)
 
 # Sources & Projects
 add_subdirectory(src/ioproxy)
+add_subdirectory(src/ioproxy-cli)

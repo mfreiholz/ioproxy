@@ -1,5 +1,5 @@
 #ifndef WIN32
-#include "SignalHandler.hpp"
+#include <ioproxy/os/SignalHandler.hpp>
 
 namespace os
 {

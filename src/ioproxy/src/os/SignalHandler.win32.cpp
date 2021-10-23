@@ -1,6 +1,6 @@
 #ifdef WIN32
-#include "SignalHandler.hpp"
 #include <Windows.h>
+#include <ioproxy/os/SignalHandler.hpp>
 
 os::SignalHandler* g_signalHandler(nullptr);
 
