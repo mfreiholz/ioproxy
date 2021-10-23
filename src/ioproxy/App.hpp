@@ -1,7 +1,9 @@
 #pragma once
 #include "AppContext.hpp"
 #include "Global.hpp"
+#include "HumanReadableFormatter.hpp"
 #include "os/SignalHandler.hpp"
+#include <QDateTime>
 #include <QObject>
 #include <QTimer>
 #include <memory>
@@ -101,6 +103,8 @@ private slots:
 
 	void onStatisticTimer()
 	{
+		// Sum up newest values.
+		auto nowTimestamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
 		Statistic sum;
 		for (const auto& h : m_context.handlers())
 		{
@@ -108,7 +112,23 @@ private slots:
 			sum.bytesRead += stats.bytesRead;
 			sum.bytesWritten += stats.bytesWritten;
 		}
-		HL_INFO(LL, QString("Statistic: Read %1 bytes / Write %2 bytes").arg(sum.bytesRead).arg(sum.bytesWritten).toStdString());
+
+		// Compare with previous statistics and calculate data rates.
+		auto bytesReadDiff = sum.bytesRead - m_previousStatistic.bytesRead;
+		auto bytesWriteDiff = sum.bytesWritten - m_previousStatistic.bytesWritten;
+		auto timestampDiff = nowTimestamp - m_previousStatisticTimestamp;
+
+		qint64 bytesReadPerSecond = ((double)bytesReadDiff / (double)timestampDiff) * 1000.0;
+		qint64 bytesWritePerSecond = ((double)bytesWriteDiff / (double)timestampDiff) * 1000.0;
+
+		m_previousStatisticTimestamp = nowTimestamp;
+		m_previousStatistic = sum;
+		HL_INFO(LL, QString("Statistic: Read %1 (%2/s) / Write %3 (%4/s)")
+						.arg(HumanReadableFormatter::fileSize(sum.bytesRead))
+						.arg(HumanReadableFormatter::fileSize(bytesReadPerSecond))
+						.arg(HumanReadableFormatter::fileSize(sum.bytesWritten))
+						.arg(HumanReadableFormatter::fileSize(bytesWritePerSecond))
+						.toStdString());
 	}
 
 signals:
@@ -122,4 +142,6 @@ private:
 	bool m_error = false;
 
 	QTimer m_statisticTimer;
+	Statistic m_previousStatistic;
+	qint64 m_previousStatisticTimestamp = 0;
 };

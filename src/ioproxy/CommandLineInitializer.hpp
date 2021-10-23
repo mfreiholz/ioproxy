@@ -1,6 +1,7 @@
 #pragma once
 #include "AppContext.hpp"
 #include "IOHandler.hpp"
+#include "io/DataGeneratorIO.hpp"
 #include "io/FileWriterIO.hpp"
 #include "io/SerialPortIO.hpp"
 #include "io/StdOutIO.hpp"
@@ -8,6 +9,7 @@
 #include "io/TcpSocketIO.hpp"
 #include "io/TextIO.hpp"
 #include "io/UdpSocketIO.hpp"
+#include "io/WebSocketServerIO.hpp"
 #include <QMultiMap>
 #include <QStringList>
 #include <iostream>
@@ -83,9 +85,19 @@ public:
 					auto io = std::make_shared<TcpServerIO>();
 					ioHandler = std::make_shared<IOHandler>(io);
 				}
+				else if (val == "wsserver")
+				{
+					auto io = std::make_shared<WebSocketServerIO>();
+					ioHandler = std::make_shared<IOHandler>(io);
+				}
 				else if (val == "serialport")
 				{
 					auto io = std::make_shared<SerialPortIO>();
+					ioHandler = std::make_shared<IOHandler>(io);
+				}
+				else if (val == "datagenerator")
+				{
+					auto io = std::make_shared<DataGeneratorIO>();
 					ioHandler = std::make_shared<IOHandler>(io);
 				}
 				else
@@ -269,6 +281,16 @@ protected:
 			options.broadcast = params.value("broadcast_clients", "0").toUInt() == 1;
 			tcpServerIO->setOptions(options);
 		}
+		else if (auto wsServerIO = std::dynamic_pointer_cast<WebSocketServerIO>(h->io); wsServerIO)
+		{
+			WebSocketServerIO::Options options;
+			options.bindAddress = QHostAddress(params.value("bind_address"));
+			options.bindPort = params.value("bind_port").toUShort();
+			options.maxConnections = params.value("max_clients", "1").toUInt();
+			options.broadcast = params.value("broadcast_clients", "0").toUInt() == 1;
+			options.writeDataMode = (WebSocketServerIO::DataMode)params.value("write_mode", "0").toUInt();
+			wsServerIO->setOptions(options);
+		}
 		else if (auto serialPortIO = std::dynamic_pointer_cast<SerialPortIO>(h->io); serialPortIO)
 		{
 			SerialPortIO::Options options;
@@ -318,6 +340,19 @@ protected:
 				options.rts = it->toUInt() == 1;
 			}
 			serialPortIO->setOptions(options);
+		}
+		else if (auto dataGen = std::dynamic_pointer_cast<DataGeneratorIO>(h->io); dataGen)
+		{
+			DataGeneratorIO::Options options;
+			if (auto it = params.find("packet_size"); it != params.end())
+			{
+				options.packetSize = it->toUInt();
+			}
+			else if (it = params.find("bytes_per_second"); it != params.end())
+			{
+				options.maxBytesPerSecond = it->toULongLong();
+			}
+			dataGen->setOptions(std::move(options));
 		}
 	}
 };

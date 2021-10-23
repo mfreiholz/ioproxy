@@ -20,8 +20,12 @@ set(headers
 	IOFactory.hpp
 	IOHandler.hpp
 	Util.hpp
+	HumanReadableFormatter.hpp
+	HumanReadableFormatter.cpp
 
 	# io
+	io/DataGeneratorIO.hpp
+	io/DataGeneratorIO.cpp
 	io/FileWriterIO.hpp
 	io/SerialPortIO.hpp
 	io/StdOutIO.hpp

@@ -254,6 +254,7 @@ private slots:
 			data.fixedSize = data.bytes.size();
 			data.parameters.insert("sender_address", dgram.senderAddress().toString());
 			data.parameters.insert("sender_port", dgram.senderPort());
+			m_statistic.bytesRead += data.bytes.size();
 			emit newData(dgram.data());
 		}
 	}

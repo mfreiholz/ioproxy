@@ -147,7 +147,7 @@ The combination of `remote_address` and `remote_port` can be used multiple times
 # TODO !!!
 ```
 
-### Serial Port
+### Serial Port (`-io serialport`)
 
 | Key | Default | Value |
 | --- | --- | --- |
@@ -157,3 +157,18 @@ The combination of `remote_address` and `remote_port` can be used multiple times
 | parity | `0` | Parity scheme. 0 = NoParity, 2 = EvenParity, 3 = OddParity, 4 = SpaceParity, 5 = MarkParity |
 | stopbits | `1` | The number of stop bits used. 1 = OneStop; 2 = TwoStop; 3 = OneAndHalfStop; -1 = UnknownStopBits |
 | flow | `0` | 0 = Disabled, 1 = Hardware flow control (RTS/CTS), 2 = Software flow control (XON/XOFF) |
+
+
+### Data Generator (`-io datagenerator`)
+
+| Key | Default | Value |
+| --- | --- | --- |
+| packet_size | `508` | Size of a single packet (e.g. when forwarded as UDP datagram) |
+| bytes_per_second | `5242880` (5 MB/s) | Number of bytes to generate per second. |
+
+
+# Build Setup
+
+## Visual Studio 2019
+Extensions
+- Format document on Save (https://marketplace.visualstudio.com/items?itemName=mynkow.FormatdocumentonSave)

@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 project(ioproxy-project)
 
 # Qt Installation Path
-#set(CMAKE_PREFIX_PATH "$ENV{QTDIR}")
+if(WIN32)
+	set(CMAKE_PREFIX_PATH "$ENV{QTDIR}")
+endif()
 
 # Linked dependencies
 include(cmake/HumbleLogging.thirdparty.cmake)
