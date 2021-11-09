@@ -1,3 +1,4 @@
+#include <QDir>
 #include <QMetaType>
 #include <QSerialPortInfo>
 #include <QtCore/QCoreApplication>
@@ -6,6 +7,7 @@
 #include <ioproxy/AppContext.hpp>
 #include <ioproxy/CommandLineInitializer.hpp>
 #include <ioproxy/IOBase.hpp>
+#include <ioproxy/license/License.hpp>
 #include <iostream>
 
 #ifdef _WIN32
@@ -35,6 +37,36 @@ void initMetaTypes()
 	qRegisterMetaType<DataPack>("DataPack");
 }
 
+void initLicense()
+{
+	// Read contents from license file.
+	const QString licenseFileName("license.lic");
+	QDir dir(QCoreApplication::applicationDirPath());
+	if (!dir.exists(licenseFileName))
+		return;
+
+	QFile f(dir.absoluteFilePath(licenseFileName));
+	if (!f.open(QIODevice::ReadOnly))
+		return;
+
+	auto encryptedBytes = f.readAll();
+	f.close();
+
+	// Decrypt contents.
+	auto decryptedBytes = encryptedBytes;
+
+	QString txt;
+	txt.append("License 1\n");
+	txt.append("creator Manuel Freiholz\n");
+	txt.append("allow all\n");
+	txt.append("allow core\n");
+	txt.append("option io.tcpserver.maxclients=1\n");
+
+	// Create license from plain content.
+	License lic;
+	lic.read(QString(decryptedBytes));
+}
+
 void printSerialPorts()
 {
 	auto portInfos = QSerialPortInfo::availablePorts();
@@ -43,6 +75,7 @@ void printSerialPorts()
 		std::cout << portInfo.portName().toStdString() << std::endl;
 	}
 }
+
 
 int main(int argc, char* argv[])
 {

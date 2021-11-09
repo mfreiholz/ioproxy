@@ -39,6 +39,10 @@ set(sources
 	include/${PROJECT_NAME}/os/SignalHandler.hpp
 	src/os/SignalHandler.linux.cpp
 	src/os/SignalHandler.win32.cpp
+
+	# license
+	include/${PROJECT_NAME}/license/License.hpp
+	src/license/License.cpp
 )
 
 add_library(
