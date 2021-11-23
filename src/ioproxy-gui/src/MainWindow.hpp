@@ -1,5 +1,6 @@
 #pragma once
 #include "ui_MainWindow.h"
+#include <QGraphicsScene>
 #include <QMainWindow>
 
 class MainWindow : public QMainWindow
@@ -12,4 +13,5 @@ public:
 
 private:
 	Ui_MainWindowForm m_ui;
+	QGraphicsScene* m_scene = nullptr;
 };

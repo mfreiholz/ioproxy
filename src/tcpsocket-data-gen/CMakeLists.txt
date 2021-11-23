@@ -1,32 +1,26 @@
 cmake_minimum_required(VERSION 3.11)
-project(ioproxy-gui VERSION 2021.9.1 LANGUAGES CXX)
+project(tcpsocket-data-gen VERSION 2021.9.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
 set(sources
-	src/Main.cpp
-	src/MainWindow.hpp
-	src/MainWindow.cpp
-	src/DataSourceWidget.hpp
-	src/DataSourceWidget.cpp
+	src/main.cpp
 )
 
 add_executable(
 	${PROJECT_NAME}
-	WIN32
 	${sources}
 )
 
 target_link_libraries(
 	${PROJECT_NAME}
 	Qt5::Core
-	Qt5::Gui
-	Qt5::Widgets
+	Qt5::Network
 	${HumbleLogging_LIBRARIES}
 	ioproxy
 )

@@ -27,6 +27,8 @@ public:
 		bool broadcast = false;
 	};
 
+	static const QString TYPE;
+
 	TcpServerIO()
 		: IOBase()
 	{

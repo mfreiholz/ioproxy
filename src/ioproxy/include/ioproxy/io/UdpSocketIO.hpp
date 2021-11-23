@@ -44,7 +44,8 @@ public:
 		bool multicastLoopback = false;
 	};
 
-public:
+	static const QString TYPE;
+
 	UdpSocketIO()
 		: IOBase()
 	{}

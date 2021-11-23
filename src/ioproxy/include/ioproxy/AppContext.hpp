@@ -18,7 +18,7 @@ public:
 	std::shared_ptr<IOHandler> findHandlerByID(const QString& id) const
 	{
 		auto it = std::find_if(m_handlers.begin(), m_handlers.end(), [&](const std::shared_ptr<IOHandler>& h) {
-			return id.compare(h->io->uniqueName()) == 0;
+			return id.compare(h->io()->uniqueName()) == 0;
 		});
 		return it != m_handlers.end() ? *it : std::shared_ptr<IOHandler>();
 	}

@@ -1,3 +1,5 @@
+#include "CmdLineConfig.hpp"
+#include "IOProxyConsoleApplication.hpp"
 #include <QDir>
 #include <QMetaType>
 #include <QSerialPortInfo>
@@ -6,6 +8,7 @@
 #include <ioproxy/App.hpp>
 #include <ioproxy/AppContext.hpp>
 #include <ioproxy/CommandLineInitializer.hpp>
+#include <ioproxy/Engine.hpp>
 #include <ioproxy/IOBase.hpp>
 #include <ioproxy/license/License.hpp>
 #include <iostream>
@@ -30,11 +33,6 @@ void initLogging()
 	fac.setDefaultFormatter(new PatternFormatter("%date\t%lls\t%m\n"));
 	fac.setConfiguration(new SimpleConfiguration(LogLevel::All));
 	fac.registerAppender(new ConsoleAppender());
-}
-
-void initMetaTypes()
-{
-	qRegisterMetaType<DataPack>("DataPack");
 }
 
 void initLicense()
@@ -76,7 +74,6 @@ void printSerialPorts()
 	}
 }
 
-
 int main(int argc, char* argv[])
 {
 	QCoreApplication a(argc, argv);
@@ -86,7 +83,7 @@ int main(int argc, char* argv[])
 	a.setOrganizationDomain("https://insanefactory.com");
 
 	initLogging();
-	initMetaTypes();
+	ioproxy::Engine::RegisterMetaTypes();
 
 	HL_INFO(L, QString("%1 - %2").arg(a.applicationName()).arg(a.applicationVersion()).toStdString());
 
@@ -96,17 +93,17 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	AppContext context;
-	CommandLineInitializer cmdInit(a.arguments());
-	if (!cmdInit.init(context))
-	{
-		HL_ERROR(L, "Error during command line initialization.");
-		return -1;
-	}
+	IOProxyConsoleApplication ioApp(nullptr);
+	QObject::connect(&ioApp, &IOProxyConsoleApplication::finished, &a, &QCoreApplication::quit);
+	QObject::connect(&ioApp, &IOProxyConsoleApplication::finishedWithSignal, &a, [&]() {
+		HL_INFO(L, "Quit on user request.");
+		a.quit();
+	});
+	QObject::connect(&ioApp, &IOProxyConsoleApplication::failed, [&](int code, const QString& errorMessage) {
+		HL_INFO(L, QString("Quit on error (%1) %2").arg(QString::number(code)).arg(errorMessage).toStdString());
+		a.quit();
+	});
+	QMetaObject::invokeMethod(&ioApp, &IOProxyConsoleApplication::startup, Qt::QueuedConnection);
 
-	App app(context);
-	QObject::connect(&app, &App::abort, &a, &QCoreApplication::quit);
-	QObject::connect(&app, &App::signalQuit, &a, &QCoreApplication::quit);
-	QMetaObject::invokeMethod(&app, &App::startAll, Qt::QueuedConnection);
 	return a.exec();
 }

@@ -10,6 +10,12 @@ find_package(Qt5 COMPONENTS Core REQUIRED)
 
 set(sources
 	src/Main.cpp
+	src/CmdLineConfig.hpp
+	src/CmdLineConfig.cpp
+	src/IOProxyConsoleApplication.hpp
+	src/IOProxyConsoleApplication.cpp
+	src/ConsoleStatusPrinter.hpp
+	src/ConsoleStatusPrinter.cpp
 )
 
 add_executable(

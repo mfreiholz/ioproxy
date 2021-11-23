@@ -25,6 +25,8 @@ public:
 		bool tcpKeepAliveOption = false;
 	};
 
+	static const QString TYPE;
+
 	TcpSocketIO()
 		: IOBase()
 	{}

@@ -51,8 +51,8 @@ class IOBase : public QObject
 	Q_OBJECT
 
 public:
-	IOBase(QObject* parent = nullptr)
-		: QObject(parent)
+	IOBase()
+		: QObject(nullptr)
 	{}
 
 	~IOBase() override = default;

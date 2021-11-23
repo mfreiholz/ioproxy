@@ -2,47 +2,31 @@
 #include "../IOBase.hpp"
 #include <iostream>
 
-class StdOutIO : public IOBase
+namespace ioproxy
 {
-	Q_OBJECT
-
-public:
-	struct Options
+	class StdOutIO : public IOBase
 	{
+		Q_OBJECT
+
+	public:
+		struct Options
+		{
+		};
+
+		static const QString TYPE;
+
+		StdOutIO();
+		~StdOutIO() override;
+
+		StdOutIO(const StdOutIO&) = delete;
+		StdOutIO& operator=(const StdOutIO&) = delete;
+
+		void setOptions(const Options& options);
+		void start() override;
+		void stop() override;
+		void writeData(const DataPack& data) override;
+
+	private:
+		Options m_options;
 	};
-
-	StdOutIO()
-		: IOBase()
-	{}
-
-	~StdOutIO() override
-	{
-		stop();
-	}
-
-	void setOptions(const Options& options)
-	{
-		m_options = options;
-	}
-
-	void start() override
-	{
-		emit started();
-	}
-
-	void stop() override
-	{
-	}
-
-	void writeData(const DataPack& data) override
-	{
-		QString str(data.bytes);
-		auto s = str.toStdString();
-		std::cout << s;
-
-		m_statistic.bytesWritten += str.size();
-	}
-
-private:
-	Options m_options;
-};
+}

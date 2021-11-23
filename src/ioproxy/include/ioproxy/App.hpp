@@ -24,9 +24,9 @@ public:
 		auto& hh = m_context.handlers();
 		for (int i = 0; i < hh.size(); ++i)
 		{
-			QObject::connect(hh[i]->io.get(), &IOBase::started, this, &App::onEntryStarted);
-			QObject::connect(hh[i]->io.get(), &IOBase::startupErrorOccured, this, &App::onEntryStartupErrorOccured);
-			QObject::connect(hh[i]->io.get(), &IOBase::errorOccured, this, &App::onEntryRuntimeErrorOccured);
+			QObject::connect(hh[i]->io().get(), &IOBase::started, this, &App::onEntryStarted);
+			QObject::connect(hh[i]->io().get(), &IOBase::startupErrorOccured, this, &App::onEntryStartupErrorOccured);
+			QObject::connect(hh[i]->io().get(), &IOBase::errorOccured, this, &App::onEntryRuntimeErrorOccured);
 		}
 		QObject::connect(&m_statisticTimer, &QTimer::timeout, this, &App::onStatisticTimer);
 	}
@@ -55,7 +55,7 @@ public slots:
 
 		for (int i = 0; i < hh.size() && !m_error; ++i)
 		{
-			hh[i]->io->start();
+			hh[i]->io()->start();
 		}
 		if (m_error)
 		{
@@ -69,7 +69,7 @@ public slots:
 		auto& handlers = m_context.handlers();
 		for (auto h : handlers)
 		{
-			h->io->stop();
+			h->io()->stop();
 		}
 	}
 
@@ -108,7 +108,7 @@ private slots:
 		Statistic sum;
 		for (const auto& h : m_context.handlers())
 		{
-			const auto& stats = h->io->statistic();
+			const auto& stats = h->io()->statistic();
 			sum.bytesRead += stats.bytesRead;
 			sum.bytesWritten += stats.bytesWritten;
 		}

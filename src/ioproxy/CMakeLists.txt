@@ -8,42 +8,67 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 find_package(Qt5 COMPONENTS Core Network SerialPort WebSockets Concurrent REQUIRED)
 
-set(sources
-	include/${PROJECT_NAME}/App.hpp
-	include/${PROJECT_NAME}/AppContext.hpp
-	include/${PROJECT_NAME}/CommandLineInitializer.hpp
-	include/${PROJECT_NAME}/Global.hpp
-	include/${PROJECT_NAME}/IOBase.hpp
-	include/${PROJECT_NAME}/IOFactory.hpp
-	include/${PROJECT_NAME}/IOHandler.hpp
-	include/${PROJECT_NAME}/Util.hpp
-	src/Util.cpp
-	include/${PROJECT_NAME}/HumanReadableFormatter.hpp
-	src/HumanReadableFormatter.cpp
+set(headers_dir ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME})
+set(sources_dir ${CMAKE_CURRENT_LIST_DIR}/src)
 
-	# io
-	include/${PROJECT_NAME}/io/DataGeneratorIO.hpp
-	src/io/DataGeneratorIO.cpp
-	include/${PROJECT_NAME}/io/FileWriterIO.hpp
-	include/${PROJECT_NAME}/io/SerialPortIO.hpp
-	include/${PROJECT_NAME}/io/StdOutIO.hpp
-	include/${PROJECT_NAME}/io/TcpServerIO.hpp
-	include/${PROJECT_NAME}/io/TcpSocketIO.hpp
-	include/${PROJECT_NAME}/io/TextIO.hpp
-	include/${PROJECT_NAME}/io/UdpSocketIO.hpp
-	include/${PROJECT_NAME}/io/WebSocketHandler.hpp
-	include/${PROJECT_NAME}/io/WebSocketServerIO.hpp
+set(sources
+	${headers_dir}/App.hpp
+	${headers_dir}/AppContext.hpp
+	${headers_dir}/CommandLineInitializer.hpp
+	${headers_dir}/Global.hpp
+	${headers_dir}/App.hpp
+
+	${headers_dir}/Config.hpp
+	${sources_dir}/Config.cpp
+
+	${headers_dir}/Engine.hpp
+	${sources_dir}/Engine.cpp
+
+	${headers_dir}/Handler.hpp
+	${sources_dir}/Handler.cpp
+
+	${headers_dir}/IOBase.hpp
+	${headers_dir}/Factory.hpp
+	${sources_dir}/Factory.cpp
+
+	${headers_dir}/IOHandler.hpp
+	${sources_dir}/IOHandler.cpp
+
+	${headers_dir}/Util.hpp
+	${sources_dir}/Util.cpp
+
+	${headers_dir}/HumanReadableFormatter.hpp
+	${sources_dir}/HumanReadableFormatter.cpp
+
+	${headers_dir}/io/TcpServerIO.hpp
+	${sources_dir}/io/TcpServerIO.cpp
+	
+	${headers_dir}/io/TcpSocketIO.hpp
+	${sources_dir}/io/TcpSocketIO.cpp
+
+	${headers_dir}/io/UdpSocketIO.hpp
+	${sources_dir}/io/UdpSocketIO.cpp
+
+	${headers_dir}/io/StdOutIO.hpp
+	${sources_dir}/io/StdOutIO.cpp
+
+	${headers_dir}/io/FileWriterIO.hpp
+	${sources_dir}/io/FileWriterIO.cpp
+
+	${headers_dir}/io/SerialPortIO.hpp
+	${sources_dir}/io/SerialPortIO.cpp
 
 	# os
-	include/${PROJECT_NAME}/os/ServiceRunner.hpp
-	include/${PROJECT_NAME}/os/SignalHandler.hpp
-	src/os/SignalHandler.linux.cpp
-	src/os/SignalHandler.win32.cpp
+	${headers_dir}/os/ServiceRunner.hpp
+	${headers_dir}/os/SignalHandler.hpp
+	${sources_dir}/os/SignalHandler.linux.cpp
+	${sources_dir}/os/SignalHandler.win32.cpp
 
 	# license
-	include/${PROJECT_NAME}/license/License.hpp
-	src/license/License.cpp
+	${headers_dir}/license/License.hpp
+	${sources_dir}/license/License.cpp
 )
+source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${sources})
 
 add_library(
 	${PROJECT_NAME}

@@ -2,6 +2,7 @@
 #include "IOBase.hpp"
 #include <QObject>
 #include <QString>
+#include <QThread>
 #include <memory>
 #include <vector>
 
@@ -10,17 +11,13 @@ class IOHandler : public QObject
 	Q_OBJECT
 
 public:
-	std::shared_ptr<IOBase> io;
+	explicit IOHandler(std::shared_ptr<IOBase> io);
+	~IOHandler() override;
 
-	IOHandler(std::shared_ptr<IOBase> io_)
-		: QObject()
-		, io(io_)
-	{
-		QObject::connect(io.get(), &IOBase::newData, this, &IOHandler::onNewData);
-	}
+	IOHandler(const IOHandler&) = delete;
+	IOHandler& operator=(const IOHandler&) = delete;
 
-	~IOHandler() override
-	{}
+	std::shared_ptr<IOBase> io() const;
 
 	void addTarget(std::shared_ptr<IOHandler> ioh)
 	{
@@ -36,11 +33,12 @@ private slots:
 			auto targetIO = m_targets.at(i).lock(); // TODO Good for performance?
 			if (targetIO)
 			{
-				targetIO->io->writeData(data);
+				targetIO->m_io->writeData(data);
 			}
 		}
 	}
 
 private:
+	std::shared_ptr<IOBase> m_io;
 	std::vector<std::weak_ptr<IOHandler>> m_targets;
 };
