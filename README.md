@@ -1,32 +1,30 @@
 # IOProxy
-IOProxy is an input/output proxy. It allows to receive data from different data sources (IOs) and forwards it to another defined data-sources (IOs).
+IOProxy is an input/output proxy. It allows to receive data from different data-sources and forwards it to other data-sources.
 
 ## Features
 **Build-in IOs (data-sources)**
 - TCP Server
 - TCP Client
-- UDP Socket (Unitcast/Multicast/~~Broadcast~~)
+- UDP Socket (Unitcast/Multicast/Broadcast)
 - Serial port (RS232, RS422, ...)
 - File Writer
 - StdOut (Console Output)
-- ~~HTTP WebSocket Server~~ (upcoming)
-- ~~HTTP WebSocket Client~~ (upcoming)
 
 ## How and Why to use it
-The idea behind the program is to provide the possibility to redirect traffic from one source to another.
+The idea behind the program is to provide the possibility to redirect traffic from one source to another without a lot of effort.
 
 IOProxy allows to define multiple data-sources, also called IOs.
-Each defined IO can be connected to one or more other defined IO(s).
-It lets you define the exact route of in- and outgoing data.
+Each defined IO can be connected to one or more other IO(s).
+It allows to define the exact route of incoming and outgoing data.
 
 **Example scenarios:**
 - Provide serial-port access via UDP or TCP
-- Forward multicast into another subnet (+over gateway/vpn)
+- Forward multicast into another subnet via unicast (+over gateway/vpn)
 
 ### Small illustration example
-Imaging you do have a computer (PC-1) with a device connected to serial-port (COM1). This device sends some kind of status every second. In addition there are two computers in the network which wants to know about the status.
+Imaging a computer (PC-1) with a device connected to serial-port (COM1). This device sends some kind of status every second. In addition there are two computers in the network which wants to know about the status. By default it is not allowed to have multiple processes/machines open the serial port.
 
-This problem can be solved by having a process opening the serial-port and provide all data via TCP or UDP to multiple clients.
+This problem can be solved by having a single process (ioproxy) opening the serial-port and provide all data via TCP or UDP to multiple clients.
 
 ```
 ┌───────────────────────────────────┐              ┌───────────────────────────────────┐
@@ -40,6 +38,9 @@ This problem can be solved by having a process opening the serial-port and provi
 │         └─────────────────┘       │              │         └───────────────┘         │
 │                                   │              │                                   │
 └───────────────────────────────────┘              └───────────────────────────────────┘
+                                                    *PC-X can also run a custom process
+                                                    instead of ioproxy-cli,
+                                                    which establishes a TCP connection.
 
 # Command on PC-1
 ioproxy
@@ -59,15 +60,15 @@ ioproxy
 ## Commandline usage
 
 ```
-ioproxy.exe {-io <io-id> -name <unique-name> [-p <key>=<value> ...] ...}
+ioproxy-cli.exe {-io <type> -name <unique-name> [-p <key>=<value> ...] ...}
 [-connect <unique-name-of-source>,<unique-name-of-destination> ...]
 ```
 
-`-io \<io-id>` The ID of the IO to be created.
+`-io <type>` The TYPE of the IO to be created (e.g. `tcpserver`)
 
 `-name <unique-name>` Unique name for the last defined `-io`. This string can then be used with the `-connect` parameter.
 
-`-p <key>=<value>` Defines parameter specifically to the previously created IO. See (Input/Output Documentation)[] for available parameters.
+`-p <key>=<value>` Defines parameter specifically to the last defined `-io`. See [Input/Output Documentation](#TODO-REF) for available parameters.
 
 `-connect <unique-name-of-source>,<unique-name-of-destination>`
 
@@ -98,8 +99,8 @@ Parameters marked with \* (asterix) are required.
 
 **Example**
 ```
-# Runs a TCP Server listen on port 1337 and broadcasts all received data to the other connected clients.
--io tcpserver -p bind_address=0.0.0.0 -p bind_port=1337 -p max_clients=99 -p broadcast_clients=1
+# Runs a TCP Server listen on port 1337 and forwards received data to the other connected clients.
+-io tcpserver -name MyTcpServer -p bind_address=0.0.0.0 -p bind_port=1337 -p max_clients=99 -p broadcast_clients=1
 ```
 
 ### TCP Socket/Client (`-io tcpsocket`)
@@ -157,18 +158,3 @@ The combination of `remote_address` and `remote_port` can be used multiple times
 | parity | `0` | Parity scheme. 0 = NoParity, 2 = EvenParity, 3 = OddParity, 4 = SpaceParity, 5 = MarkParity |
 | stopbits | `1` | The number of stop bits used. 1 = OneStop; 2 = TwoStop; 3 = OneAndHalfStop; -1 = UnknownStopBits |
 | flow | `0` | 0 = Disabled, 1 = Hardware flow control (RTS/CTS), 2 = Software flow control (XON/XOFF) |
-
-
-### Data Generator (`-io datagenerator`)
-
-| Key | Default | Value |
-| --- | --- | --- |
-| packet_size | `508` | Size of a single packet (e.g. when forwarded as UDP datagram) |
-| bytes_per_second | `5242880` (5 MB/s) | Number of bytes to generate per second. |
-
-
-# Build Setup
-
-## Visual Studio 2019
-Extensions
-- Format document on Save (https://marketplace.visualstudio.com/items?itemName=mynkow.FormatdocumentonSave)

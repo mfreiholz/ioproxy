@@ -1,4 +1,0 @@
-- [ ] Print statistics and stats to console.
-- [x] Refactor to use CMake files.
-- [ ] Allow to run as service on windows
-- [ ] Write systemd service config (/etc/systemd/ioproxy.service)

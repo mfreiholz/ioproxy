@@ -1,5 +1,5 @@
 {
-	"name": "IOProxy (devcontainer for WSL2)",
+	"name": "IOProxy Development Container",
 	"dockerFile": "Dockerfile",
 	"extensions": [
 		"ms-vscode.cpptools",
