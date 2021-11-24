@@ -10,6 +10,7 @@ RUN apt-get install -y gcc
 RUN apt-get install -y g++
 RUN apt-get install -y gdb
 RUN apt-get install -y cmake
+RUN apt-get install -y clang-format
 
 # Not required, because it comes with the VSCode C++ extension
 #RUN apt-get install -y clang-format

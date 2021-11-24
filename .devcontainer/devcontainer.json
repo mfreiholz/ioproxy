@@ -3,7 +3,8 @@
 	"dockerFile": "Dockerfile",
 	"extensions": [
 		"ms-vscode.cpptools",
-		"ms-vscode.cmake-tools"
+		"ms-vscode.cmake-tools",
+		"xaver.clang-format"
 	],
 	"mounts": []
 }

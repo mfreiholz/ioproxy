@@ -1,5 +1,6 @@
 #include "CmdLineConfig.hpp"
 #include <iostream>
+#include <memory>
 using namespace ioproxy;
 
 CmdLineConfig::CmdLineConfig()

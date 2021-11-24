@@ -3,5 +3,13 @@
 	"editor.codeActionsOnSave": {
 		"source.fixAll": true
 	},
-	"C_Cpp.formatting": "clangFormat"
+	"C_Cpp.formatting": "clangFormat",
+	"editor.defaultFormatter": "xaver.clang-format",
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.renderWhitespace": "all",
+	"files.associations": {
+		"*.in": "plaintext"
+	},
+	"workbench.tree.indent": 32
 }

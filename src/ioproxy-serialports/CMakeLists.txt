@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(ioproxy-cli LANGUAGES CXX)
+project(ioproxy-serialports VERSION 2021.9.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,12 +9,6 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
 set(sources
-	src/CmdLineConfig.hpp
-	src/CmdLineConfig.cpp
-	src/ConsoleStatusPrinter.hpp
-	src/ConsoleStatusPrinter.cpp
-	src/IOProxyConsoleApplication.hpp
-	src/IOProxyConsoleApplication.cpp
 	src/Main.cpp
 )
 
@@ -29,7 +23,6 @@ target_link_libraries(
 	${HumbleLogging_LIBRARIES}
 	ioproxy
 )
-
 add_dependencies(${PROJECT_NAME} HumbleLogging)
 add_dependencies(${PROJECT_NAME} LibMUL)
 add_dependencies(${PROJECT_NAME} ioproxy)

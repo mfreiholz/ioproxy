@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(ioproxy VERSION 2021.9.1 LANGUAGES CXX)
+project(ioproxy LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,34 +12,32 @@ set(headers_dir ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME})
 set(sources_dir ${CMAKE_CURRENT_LIST_DIR}/src)
 
 set(sources
-	${headers_dir}/App.hpp
-	${headers_dir}/AppContext.hpp
-	${headers_dir}/CommandLineInitializer.hpp
-	${headers_dir}/Global.hpp
-	${headers_dir}/App.hpp
-
 	${headers_dir}/Config.hpp
 	${sources_dir}/Config.cpp
 
 	${headers_dir}/Engine.hpp
 	${sources_dir}/Engine.cpp
 
-	${headers_dir}/Handler.hpp
-	${sources_dir}/Handler.cpp
-
-	${headers_dir}/IOBase.hpp
 	${headers_dir}/Factory.hpp
 	${sources_dir}/Factory.cpp
 
-	${headers_dir}/IOHandler.hpp
-	${sources_dir}/IOHandler.cpp
+	${headers_dir}/Global.hpp
 
-	${headers_dir}/Util.hpp
-	${sources_dir}/Util.cpp
+	${headers_dir}/Handler.hpp
+	${sources_dir}/Handler.cpp
 
 	${headers_dir}/HumanReadableFormatter.hpp
 	${sources_dir}/HumanReadableFormatter.cpp
 
+	${headers_dir}/IOBase.hpp
+
+	${headers_dir}/Logging.hpp
+	${sources_dir}/Logging.cpp
+
+	${headers_dir}/Util.hpp
+	${sources_dir}/Util.cpp
+
+	# /io
 	${headers_dir}/io/TcpServerIO.hpp
 	${sources_dir}/io/TcpServerIO.cpp
 	
@@ -58,13 +56,13 @@ set(sources
 	${headers_dir}/io/SerialPortIO.hpp
 	${sources_dir}/io/SerialPortIO.cpp
 
-	# os
+	# /os
 	${headers_dir}/os/ServiceRunner.hpp
 	${headers_dir}/os/SignalHandler.hpp
 	${sources_dir}/os/SignalHandler.linux.cpp
 	${sources_dir}/os/SignalHandler.win32.cpp
 
-	# license
+	# /license
 	${headers_dir}/license/License.hpp
 	${sources_dir}/license/License.cpp
 )
