@@ -5,6 +5,7 @@
 #include <QTcpSocket>
 #include <QTimer>
 #include <cinttypes>
+#include <memory>
 
 class TcpSocketIO : public IOBase
 {

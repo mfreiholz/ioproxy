@@ -9,7 +9,8 @@
 			"options": {
 				"cwd": "${workspaceRoot}/build"
 			},
-			"command": "cmake -DCMAKE_BUILD_TYPE=Debug .."
+			"command": "cmake -DCMAKE_BUILD_TYPE=Debug ..",
+			"problemMatcher": []
 		},
 		{
 			"label": "build",

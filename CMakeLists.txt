@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
-project(ioproxy-project VERSION 1.0.0)
+string(TIMESTAMP UNIX_TIMESTAMP "%s" UTC)
+
+project(
+	ioproxy-project
+	VERSION 1.0.0.${UNIX_TIMESTAMP}
+	DESCRIPTION ""
+	HOMEPAGE_URL "https://github.com/mfreiholz/ioproxy"
+)
 
 # Qt Installation Path
 if(WIN32)
@@ -12,7 +19,7 @@ include(cmake/LibMUL.thirdparty.cmake)
 
 # Generate version.hpp
 configure_file(
-	${PROJECT_SOURCE_DIR}/src/ioproxy/include/ioproxy/Version.hpp.in
+	${PROJECT_SOURCE_DIR}/cmake/Version.hpp.in
 	${PROJECT_SOURCE_DIR}/src/ioproxy/include/ioproxy/Version.hpp
 )
 

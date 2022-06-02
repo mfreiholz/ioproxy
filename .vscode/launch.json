@@ -8,10 +8,12 @@
 			"name": "(gdb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/src/ioproxy/ioproxy",
+			"program": "${workspaceFolder}/build/src/ioproxy-cli/ioproxy-cli",
 			"args": [
 				"-io",
 				"tcpserver",
+				"-name",
+				"tcpsrv1",
 				"-p",
 				"bind_port=12345"
 			],

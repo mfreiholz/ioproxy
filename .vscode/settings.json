@@ -9,7 +9,8 @@
 	"editor.detectIndentation": false,
 	"editor.renderWhitespace": "all",
 	"files.associations": {
-		"*.in": "plaintext"
+		"*.in": "plaintext",
+		"qt": "cpp"
 	},
 	"workbench.tree.indent": 32
 }
