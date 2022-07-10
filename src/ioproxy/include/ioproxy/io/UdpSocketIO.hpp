@@ -18,7 +18,6 @@
 /*
 	Capabilities:
 	Can receive data on "bindAdress:bindPort".
-
 */
 class UdpSocketIO : public IOBase
 {
@@ -195,6 +194,7 @@ public:
 			{
 				HL_ERROR(LL, "Can't write bytes over socket");
 			}
+			m_statistic.bytesWritten += bytesWritten;
 		}
 		// unicast
 		else
@@ -206,6 +206,7 @@ public:
 				{
 					HL_ERROR(LL, "Can't write bytes over socket");
 				}
+				m_statistic.bytesWritten += bytesWritten;
 			}
 		}
 	}
@@ -232,8 +233,10 @@ private slots:
 		HL_INFO(LL, "Disconnected");
 	}
 
-	void onSocketErrorOccurred(QAbstractSocket::SocketError)
+	void onSocketErrorOccurred(QAbstractSocket::SocketError socketError)
 	{
+		if (socketError == QAbstractSocket::ConnectionRefusedError)
+			return; //< Do not forward as error, if there is no remote listener yet.
 		emit errorOccured(m_socket->errorString());
 	}
 

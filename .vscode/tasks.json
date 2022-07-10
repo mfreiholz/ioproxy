@@ -18,7 +18,7 @@
 			"options": {
 				"cwd": "${workspaceRoot}/build"
 			},
-			"command": "make",
+			"command": "cmake --build .",
 			"group": {
 				"kind": "build",
 				"isDefault": true

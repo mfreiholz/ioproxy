@@ -1,14 +1,10 @@
-cmake_minimum_required(VERSION 3.11)
-project(ioproxy LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(name "ioproxy")
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 find_package(Qt5 COMPONENTS Core Network SerialPort WebSockets Concurrent REQUIRED)
 
-set(headers_dir ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME})
+set(headers_dir ${CMAKE_CURRENT_LIST_DIR}/include/${name})
 set(sources_dir ${CMAKE_CURRENT_LIST_DIR}/src)
 
 set(sources
@@ -69,18 +65,18 @@ set(sources
 source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${sources})
 
 add_library(
-	${PROJECT_NAME}
+	${name}
 	STATIC
 	${sources}
 )
 
 target_include_directories(
-	${PROJECT_NAME}
+	${name}
 	PUBLIC include
 )
 
 target_link_libraries(
-	${PROJECT_NAME}
+	${name}
 	Qt5::Core
 	Qt5::Network
 	Qt5::SerialPort
@@ -88,5 +84,5 @@ target_link_libraries(
 	Qt5::Concurrent
 	${HumbleLogging_LIBRARIES}
 )
-add_dependencies(${PROJECT_NAME} HumbleLogging)
-add_dependencies(${PROJECT_NAME} LibMUL)
+add_dependencies(${name} HumbleLogging)
+add_dependencies(${name} LibMUL)

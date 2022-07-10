@@ -27,7 +27,7 @@ void IOProxyConsoleApplication::startup()
 		return;
 	}
 
-	Engine::RegisterMetaTypes();
+	//Engine::RegisterMetaTypes();
 	m_engine = std::make_unique<Engine>(std::move(config), this);
 	m_engine->start();
 
