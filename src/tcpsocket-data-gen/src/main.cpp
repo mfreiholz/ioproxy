@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 	QCoreApplication a(argc, argv);
 
 	QTcpSocket sock;
-	sock.connectToHost("127.0.0.1", 12345);
+	sock.connectToHost("127.0.0.1", 24002);
 	if (!sock.waitForConnected())
 		return 1;
 

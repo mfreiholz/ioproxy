@@ -34,6 +34,9 @@ set(sources
 	${sources_dir}/Util.cpp
 
 	# /io
+	${headers_dir}/io/CompressionIO.hpp
+	${sources_dir}/io/CompressionIO.cpp
+
 	${headers_dir}/io/TcpServerIO.hpp
 	${sources_dir}/io/TcpServerIO.cpp
 	

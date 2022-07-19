@@ -5,6 +5,7 @@
 #include <ioproxy/io/TcpServerIO.hpp>
 #include <ioproxy/io/TcpSocketIO.hpp>
 #include <ioproxy/io/UdpSocketIO.hpp>
+#include <ioproxy/io/CompressionIO.hpp>
 using namespace ioproxy;
 
 std::unique_ptr<IOBase> Factory::createIO(const Config::IO& config)
@@ -15,6 +16,16 @@ std::unique_ptr<IOBase> Factory::createIO(const Config::IO& config)
 		StdOutIO::Options options = {};
 
 		auto io = std::make_unique<StdOutIO>();
+		io->setOptions(options);
+		baseIO = std::move(io);
+	}
+	else if (config.type.compare(CompressionIO::TYPE) == 0)
+	{
+		CompressionIO::Options options = {};
+		options.mode = config.parameters.value("mode", QChar(CompressionIO::COMPRESS)).at(0).toLatin1();
+		options.level = config.parameters.value("level", "-1").toInt();
+
+		auto io = std::make_unique<CompressionIO>();
 		io->setOptions(options);
 		baseIO = std::move(io);
 	}
