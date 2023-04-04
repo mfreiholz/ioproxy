@@ -27,13 +27,13 @@ target_link_libraries(
 	Qt5::Core
 	Qt5::Gui
 	Qt5::Widgets
-	${HumbleLogging_LIBRARIES}
+	humblelogging
 	ioproxy
 )
 
-add_dependencies(${PROJECT_NAME} HumbleLogging)
-add_dependencies(${PROJECT_NAME} LibMUL)
-add_dependencies(${PROJECT_NAME} ioproxy)
+#add_dependencies(${PROJECT_NAME} HumbleLogging)
+#add_dependencies(${PROJECT_NAME} LibMUL)
+#add_dependencies(${PROJECT_NAME} ioproxy)
 
 # Installation
 if(WIN32)

@@ -252,14 +252,15 @@ private slots:
 			const QNetworkDatagram dgram = m_socket->receiveDatagram();
 			if (m_options.echo)
 			{
-				m_socket->writeDatagram(dgram.data(), dgram.senderAddress(), dgram.senderPort());
+				auto written = m_socket->writeDatagram(dgram.data(), dgram.senderAddress(), dgram.senderPort());
+				m_statistic.bytesWritten += written;
 			}
 			DataPack data(dgram.data());
 			data.fixedSize = data.bytes.size();
 			data.parameters.insert("sender_address", dgram.senderAddress().toString());
 			data.parameters.insert("sender_port", dgram.senderPort());
 			m_statistic.bytesRead += data.bytes.size();
-			emit newData(dgram.data());
+			emit newData(data);
 		}
 	}
 

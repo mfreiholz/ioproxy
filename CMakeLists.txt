@@ -10,6 +10,7 @@ project(
 )
 
 # Qt Installation Path
+# Allows to define a custom environment variable "IOPROXY_QTDIR" to override the default "QTDIR" variable.
 if(WIN32)
 	if(DEFINED ENV{IOPROXY_QTDIR})
 		message("Overwrite QTDIR with IOPROXY_QTDIR: $ENV{IOPROXY_QTDIR}")
@@ -18,9 +19,9 @@ if(WIN32)
 	set(CMAKE_PREFIX_PATH "$ENV{QTDIR}")
 endif()
 
-# Linked dependencies
-include(cmake/HumbleLogging.thirdparty.cmake)
-include(cmake/LibMUL.thirdparty.cmake)
+# Third party libraries.
+include(thirdparty/humblelogging.cmake)
+#include(cmake/LibMUL.thirdparty.cmake)
 
 # Generate version.hpp
 configure_file(
@@ -35,3 +36,4 @@ add_subdirectory(src/ioproxy-cli)
 add_subdirectory(src/ioproxy-gui)
 add_subdirectory(src/ioproxy-serialports)
 add_subdirectory(src/tcpsocket-data-gen)
+add_subdirectory(src/udpsocket-data-gen)

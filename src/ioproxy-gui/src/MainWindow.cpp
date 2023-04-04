@@ -15,9 +15,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 	m_scene->addRect(1, 1, 5, 5);
 
-	auto dswidget = new DataSourceWidget(nullptr);
-	auto dsWidgetProxy = m_scene->addWidget(dswidget);
-	dsWidgetProxy->setFlags(dsWidgetProxy->flags() | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
+	//auto dswidget = new DataSourceWidget(nullptr);
+	//auto dsWidgetProxy = m_scene->addWidget(dswidget);
+	//dsWidgetProxy->setFlags(dsWidgetProxy->flags() | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
 
 	m_ui.graphicsView->setScene(m_scene);

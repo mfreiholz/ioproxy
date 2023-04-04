@@ -26,13 +26,13 @@ add_executable(
 target_link_libraries(
 	${PROJECT_NAME}
 	Qt5::Core
-	${HumbleLogging_LIBRARIES}
+	humblelogging
 	ioproxy
 )
 
-add_dependencies(${PROJECT_NAME} HumbleLogging)
-add_dependencies(${PROJECT_NAME} LibMUL)
-add_dependencies(${PROJECT_NAME} ioproxy)
+#add_dependencies(${PROJECT_NAME} HumbleLogging)
+#add_dependencies(${PROJECT_NAME} LibMUL)
+#add_dependencies(${PROJECT_NAME} ioproxy)
 
 # Installation
 if(WIN32)

@@ -19,30 +19,23 @@ Handler::~Handler()
 	stop();
 }
 
+const std::unique_ptr<IOBase>& Handler::io() const
+{
+	return m_io;
+}
+
 void Handler::start()
 {
 	QObject::connect(m_io.get(), &IOBase::started, this, &Handler::onStarted);
 	QObject::connect(m_io.get(), &IOBase::startupErrorOccured, this, &Handler::onStartupErrorOccured);
 	QObject::connect(m_io.get(), &IOBase::errorOccured, this, &Handler::onErrorOccured);
-
-	// Connect to receiving IOs.
-	// -> User-defined destinations for incoming data of this IO.
-	auto destinations = m_engine->m_config.connections().values(m_io->uniqueName());
-	for (const auto& dest : destinations)
-	{
-		for (const auto& destHandler : m_engine->m_handlers)
-		{
-			if (destHandler->m_io->uniqueName().compare(dest) != 0)
-				continue;
-			QObject::connect(m_io.get(), &IOBase::newData, destHandler->m_io.get(), &IOBase::writeData);
-		}
-	}
-
 	m_io->start();
 }
 
 void Handler::stop()
 {
+	m_io->stop();
+	m_io->disconnect(this);
 	// @todo Revert everything done in start().
 }
 

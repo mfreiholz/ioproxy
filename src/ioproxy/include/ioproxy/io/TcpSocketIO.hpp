@@ -75,6 +75,7 @@ public:
 								  .arg(m_socket->peerPort()));
 			return;
 		}
+		m_statistic.bytesWritten += written;
 	}
 
 protected:
@@ -123,7 +124,8 @@ private slots:
 	{
 		while (m_socket->bytesAvailable() > 0)
 		{
-			auto data = m_socket->read(m_socket->bytesAvailable());
+			DataPack data(m_socket->read(m_socket->bytesAvailable()));
+			m_statistic.bytesRead += data.bytes.size();
 			emit newData(data);
 		}
 	}

@@ -17,6 +17,7 @@ Engine::Engine(Config config, QObject* parent)
 	: QObject(parent)
 	, m_config{std::move(config)}
 {
+	// Setup IOs.
 	for (const Config::IO& ioConfig : m_config.ios())
 	{
 		auto io = Factory::createIO(ioConfig);
@@ -27,6 +28,21 @@ Engine::Engine(Config config, QObject* parent)
 		}
 		auto handler = std::make_unique<Handler>(this, std::move(io));
 		m_handlers.push_back(std::move(handler));
+	}
+
+	// Setup connections between IOs.
+	for (const std::unique_ptr<Handler>& h : m_handlers)
+	{
+		auto destinations = m_config.connections().values(h->io()->uniqueName());
+		for (const auto& dest : destinations)
+		{
+			for (const auto& destHandler : m_handlers)
+			{
+				if (destHandler->m_io->uniqueName().compare(dest) != 0)
+					continue;
+				QObject::connect(h->io().get(), &IOBase::newData, destHandler->io().get(), &IOBase::writeData);
+			}
+		}
 	}
 }
 

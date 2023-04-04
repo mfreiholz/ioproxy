@@ -82,7 +82,7 @@ target_link_libraries(
 	Qt5::SerialPort
 	Qt5::WebSockets
 	Qt5::Concurrent
-	${HumbleLogging_LIBRARIES}
+	humblelogging
 )
-add_dependencies(${name} HumbleLogging)
-add_dependencies(${name} LibMUL)
+#add_dependencies(${name} HumbleLogging)
+#add_dependencies(${name} LibMUL)

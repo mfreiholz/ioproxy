@@ -9,9 +9,9 @@ namespace ioproxy
 	{
 		using namespace humble::logging;
 		Factory& fac = Factory::getInstance();
-		fac.setDefaultFormatter(new PatternFormatter("%date\t%lls\t%m\n"));
-		fac.setConfiguration(new SimpleConfiguration(LogLevel::All));
-		fac.registerAppender(new ConsoleAppender());
+		fac.setDefaultFormatter(std::make_unique<PatternFormatter>("%date\t%lls\t%m\n"));
+		fac.setConfiguration(std::make_unique<Configuration>(LogLevel::All));
+		fac.registerAppender(std::make_shared<ConsoleAppender>());
 	}
 
 	void PrintAppInfoHeader()

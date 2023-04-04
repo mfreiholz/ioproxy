@@ -24,6 +24,7 @@ namespace ioproxy
 		Handler(const Handler&) = delete;
 		Handler& operator=(const Handler&) = delete;
 
+		const std::unique_ptr<IOBase>& io() const;
 		Q_SLOT void start();
 		Q_SLOT void stop();
 
