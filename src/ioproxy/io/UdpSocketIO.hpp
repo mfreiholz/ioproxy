@@ -18,6 +18,8 @@
 /*
 	Capabilities:
 	Can receive data on "bindAdress:bindPort".
+
+	@todo Allow to define max/fixed datagram size.
 */
 class UdpSocketIO : public IOBase
 {

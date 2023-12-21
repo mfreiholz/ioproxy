@@ -18,7 +18,7 @@ namespace ioproxy
 		{
 			QString id;
 			QString type;
-			QMap<QString, QString> parameters;
+			QMultiMap<QString, QString> parameters;
 		};
 
 		Config() = default;

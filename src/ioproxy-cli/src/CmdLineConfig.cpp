@@ -69,7 +69,7 @@ bool CmdLineConfig::fromArguments(QStringList arguments)
 				std::cerr << "Missing value for -connect <source>,<destination>" << std::endl;
 				return false;
 			}
-			const QStringList kv = val.split(',', QString::SkipEmptyParts);
+			const QStringList kv = val.split(',', Qt::SkipEmptyParts);
 			if (kv.size() != 2)
 			{
 				std::cerr << "Invalid syntax for -connection argument" << std::endl;

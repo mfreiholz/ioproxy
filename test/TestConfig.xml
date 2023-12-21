@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ioproxy>
+
+	<sources>
+
+		<source id="tcpsrv01" type="tcpserver">
+			<properties>
+				<property name="bind_address" value="127.0.0.1" />
+				<property name="bind_port" value="12345" />
+			</properties>
+		</source>
+
+		<source id="tcpsrv02" type="tcpserver">
+			<properties>
+				<property name="bind_address" value="127.0.0.1" />
+				<property name="bind_port" value="12346" />
+			</properties>
+		</source>
+
+		<source id="udp1" type="udpsocket">
+			<properties>
+				<property name="bind_address" value="127.0.0.1" />
+				<property name="bind_port" value="12346" />
+			</properties>
+		</source>
+
+	</sources>
+
+	<blueprint>
+		<item id="tcpsrv01" x="40" y="10" />
+		<item id="tcpsrv02" x="40" y="200" />
+		<item id="udp1" x="40" y="400" />
+	</blueprint>
+
+</ioproxy>

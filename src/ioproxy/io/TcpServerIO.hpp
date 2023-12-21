@@ -166,6 +166,10 @@ private slots:
 		sock->deleteLater();
 	}
 
+signals:
+	void bindAddressChanged();
+	void bindPortChanged();
+
 private:
 	Options m_options;
 	QTcpServer m_server;

@@ -3,11 +3,15 @@
 #include <QList>
 #include <QMap>
 #include <QMetaType>
+#include <QMultiMap>
 #include <QObject>
 #include <QString>
 #include <QVariant>
 #include <cinttypes>
 
+/*!
+ * \brief The DataPack class
+ */
 class DataPack
 {
 public:
@@ -35,11 +39,16 @@ public:
 };
 Q_DECLARE_METATYPE(DataPack);
 
+
+/*!
+ * \brief The Statistic class
+ */
 struct Statistic
 {
 	int64_t bytesRead = 0;
 	int64_t bytesWritten = 0;
 };
+
 
 /*!
 	Base object for all types that can input/output data.
@@ -90,5 +99,36 @@ signals:
 
 protected:
 	QString m_uniqueName;
+	bool m_useRawData = true;
 	Statistic m_statistic;
+};
+
+class IOParameterDefinition
+{
+public:
+	enum DataType
+	{
+		INT8,
+		INT16,
+		INT32,
+		INT64,
+		STRING,
+	};
+
+	QString name;
+	DataType type = DataType::STRING;
+	bool required = false;
+	bool multi = false;
+};
+
+
+using IOParameters = QMultiMap<QString, QVariant>;
+
+
+class IOFactory
+{
+public:
+	virtual QString getID() const = 0;
+	virtual QList<IOParameterDefinition> getParameterDefinitions() const = 0;
+	virtual IOBase* create(const IOParameters& parameters);
 };
