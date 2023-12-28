@@ -1,7 +1,7 @@
 {
 	"editor.formatOnSave": true,
 	"editor.codeActionsOnSave": {
-		"source.fixAll": true
+		"source.fixAll": "explicit"
 	},
 	"C_Cpp.formatting": "clangFormat",
 	"editor.defaultFormatter": "xaver.clang-format",

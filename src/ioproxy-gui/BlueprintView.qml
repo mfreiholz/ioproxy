@@ -14,8 +14,15 @@ Rectangle {
 		BlueprintItem {
 			x: 30
 			y: 30
-			//width: 240
-			//height: 180
+		}
+	}
+
+	Component {
+		id: tcpSocketComp
+
+		BlueprintTcpSocket {
+			x: 500
+			y: 30
 		}
 	}
 
@@ -35,5 +42,6 @@ Rectangle {
 //		}
 
 		itemComp.createObject(view)
+		tcpSocketComp.createObject(view)
 	}
 }

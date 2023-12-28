@@ -20,6 +20,8 @@ qt_add_resources(
 	PREFIX
 		"/qml/"
 	FILES
+		"BlueprintTcpSocket.qml"
+
 		"BlueprintBackground.qml"
 		"BlueprintItem.qml"
 		"BlueprintView.qml"

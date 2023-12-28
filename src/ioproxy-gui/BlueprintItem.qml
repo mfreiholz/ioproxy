@@ -5,14 +5,28 @@ Rectangle {
 	property var bpItem
 
 	id: root
-	color: "#2955ad"
+	color: "#000000"
 	radius: 5
 	width: 300
 	height: 350
 
-	ColumnLayout {
+	Rectangle {
 		anchors.fill: parent
-		anchors.margins: 5
+		anchors.margins: 1
+		id: contentRect
+		color: "#2955ad"
+		radius: 5
+		gradient: Gradient {
+			orientation: Gradient.Vertical
+			GradientStop { position: 0; color: "#4263a3" }
+			GradientStop { position: 1; color: "#2955ad" }
+		}
+	}
+}
+
+// Legacy - Safe Code
+
+/*
 
 		// Header element.
 		Rectangle {
@@ -30,17 +44,23 @@ Rectangle {
 			}
 		}
 
-		// Content element.
-		// e.g. Attributes, Statistics, ...
+		// Footer element.
 		Rectangle {
-			id: contentRect
-			color: "#ff9900"
+			id: footer
+			color: "#FFFFFF"
 			radius: 5
 			Layout.fillWidth: true
-			Layout.fillHeight: true
+			Layout.preferredHeight: footerText.height + 2 * Constants.defaultTextPadding
+
+			Text {
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
+				text: "Title"
+				id: footerText
+			}
+		}
 
 			// DEV Begin
-			/*
 			ColumnLayout {
 				anchors.fill: parent
 				id: contentLayout
@@ -93,24 +113,7 @@ Rectangle {
 					id: statisticsRect
 					color: "#9900FF"
 				}
-			}*/
-			// DEV End
-		}
-
-		// Header element.
-		Rectangle {
-			id: footer
-			color: "#FFFFFF"
-			radius: 5
-			Layout.fillWidth: true
-			Layout.preferredHeight: footerText.height + 2 * Constants.defaultTextPadding
-
-			Text {
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter
-				text: "Title"
-				id: footerText
 			}
-		}
-	}
-}
+			// DEV End
+
+*/
