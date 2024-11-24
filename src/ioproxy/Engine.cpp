@@ -1,78 +1,148 @@
+#include "Engine.hpp"
 #include <QHostAddress>
 #include <QMetaType>
-#include <humblelogging/humblelogging.h>
-#include <ioproxy/Engine.hpp>
-#include <ioproxy/Factory.hpp>
-using namespace ioproxy;
 
-HUMBLE_LOGGER(L, "ioproxy.engine");
+#include "io/SerialPortIO.hpp"
+#include "io/StdOutIO.hpp"
+#include "io/TcpServerIO.hpp"
+#include "io/TcpSocketIO.hpp"
+#include "io/UdpSocketIO.hpp"
 
-void Engine::RegisterMetaTypes()
+namespace ioproxy
 {
-	qRegisterMetaType<DataPack>("DataPack");
-	qRegisterMetaType<QHostAddress>("QHostAddress");
-}
-
-Engine::Engine(Config config, QObject* parent)
-	: QObject(parent)
-	, m_config{std::move(config)}
-{
-	// Setup IOs.
-	for (const Config::IO& ioConfig : m_config.ios())
+	void Engine::RegisterMetaTypes()
 	{
-		auto io = Factory::createIO(ioConfig);
-		if (!io)
-		{
-			HL_ERROR(L, QString("Can't create IO: %1").arg(ioConfig.type).toStdString());
-			continue;
-		}
-		auto handler = std::make_unique<Handler>(this, std::move(io));
-		m_handlers.push_back(std::move(handler));
+		qRegisterMetaType<DataPack>("DataPack");
+		qRegisterMetaType<QHostAddress>("QHostAddress");
 	}
 
-	// Setup connections between IOs.
-	for (const std::unique_ptr<Handler>& h : m_handlers)
+	Engine::Engine(QObject* parent)
+		: QObject(parent)
+	{}
+
+	Engine::~Engine()
 	{
-		auto destinations = m_config.connections().values(h->io()->uniqueName());
-		for (const auto& dest : destinations)
+		qDeleteAll(m_ioFactories);
+	}
+
+	tl::expected<void, QString> Engine::registerBuiltIn()
+	{
+		tl::expected<void, QString> fail;
+		IOFactoryBase* ioFactory = nullptr;
+
+		ioFactory = new SerialPortIOFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
+
+		ioFactory = new StdOutFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
+
+		ioFactory = new TcpSocketFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
+
+		ioFactory = new TcpServerIOFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
+
+		ioFactory = new UdpSocketIOFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
+
+		return fail;
+	}
+
+	tl::expected<void, QString> Engine::registerIOFactory(IOFactoryBase* ioFactory)
+	{
+		if (!ioFactory)
 		{
-			for (const auto& destHandler : m_handlers)
+			return tl::make_unexpected("NULL parameter");
+		}
+		if (m_ioFactories.contains(ioFactory->getID()))
+		{
+			return tl::make_unexpected(QString("Factory \"%1\" already registered.").arg(ioFactory->getID()));
+		}
+		m_ioFactories.insert(ioFactory->getID(), ioFactory);
+		return {};
+	}
+
+	tl::expected<IOFactoryBase*, QString> Engine::findFactoryByID(const QString& factoryID) const
+	{
+		auto it = m_ioFactories.find(factoryID);
+		if (it == m_ioFactories.cend())
+			return tl::make_unexpected(QString("Factory with ID \"%1\" not registered.").arg(factoryID));
+		return it.value();
+	}
+
+	tl::expected<void, QString> Engine::addIO(std::shared_ptr<IOBase> io)
+	{
+		std::shared_ptr<Handler> handler = std::make_shared<Handler>(this, io);
+		if (m_started)
+		{
+			handler->start();
+		}
+		m_handlers.push_back(handler);
+		return {};
+	}
+
+	tl::expected<void, QString> ioproxy::Engine::addConnection(const QString& srcIO, const QString& dstIO)
+	{
+		auto eSrc = getIOHandler(srcIO);
+		if (!eSrc)
+			return tl::make_unexpected(eSrc.error());
+
+		auto eDst = getIOHandler(dstIO);
+		if (!eDst)
+			return tl::make_unexpected(eDst.error());
+
+		auto src = eSrc.value();
+		auto dst = eDst.value();
+		QObject::connect(src->io().get(), &IOBase::newData, dst->io().get(), &IOBase::writeData);
+		return {};
+	}
+
+	Statistic Engine::statisticSummary() const
+	{
+		Statistic sum;
+		for (const auto& h : m_handlers)
+		{
+			const auto& stats = h->m_io->statistic();
+			sum.bytesRead += stats.bytesRead;
+			sum.bytesWritten += stats.bytesWritten;
+		}
+		return sum;
+	}
+
+	void Engine::start()
+	{
+		if (m_started)
+			return;
+		for (const auto& handler : m_handlers)
+		{
+			handler->start();
+		}
+		m_started = true;
+	}
+
+	void Engine::stop()
+	{
+		for (const auto& handler : m_handlers)
+		{
+			handler->stop();
+		}
+		m_started = false;
+	}
+
+	tl::expected<std::shared_ptr<Handler>, QString> Engine::getIOHandler(const QString& id) const
+	{
+		for (auto it = m_handlers.cbegin(); it != m_handlers.cend(); it++)
+		{
+			if ((*it)->io()->uniqueName().compare(id, Qt::CaseInsensitive) == 0)
 			{
-				if (destHandler->m_io->uniqueName().compare(dest) != 0)
-					continue;
-				QObject::connect(h->io().get(), &IOBase::newData, destHandler->io().get(), &IOBase::writeData);
+				return *it;
 			}
 		}
-	}
-}
-
-Engine::~Engine()
-{}
-
-Statistic Engine::statisticSummary() const
-{
-	Statistic sum;
-	for (const auto& h : m_handlers)
-	{
-		const auto& stats = h->m_io->statistic();
-		sum.bytesRead += stats.bytesRead;
-		sum.bytesWritten += stats.bytesWritten;
-	}
-	return sum;
-}
-
-void Engine::start()
-{
-	for (const auto& handler : m_handlers)
-	{
-		handler->start();
-	}
-}
-
-void Engine::stop()
-{
-	for (const auto& handler : m_handlers)
-	{
-		handler->stop();
+		return tl::make_unexpected(QString("Can't find IO (id=%1)").arg(id));
 	}
 }

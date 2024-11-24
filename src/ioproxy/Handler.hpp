@@ -1,6 +1,6 @@
 #pragma once
+#include "io/IOBase.hpp"
 #include <QObject>
-#include <ioproxy/IOBase.hpp>
 #include <memory>
 
 namespace ioproxy
@@ -16,30 +16,49 @@ namespace ioproxy
 	class Handler : public QObject
 	{
 		Q_OBJECT
+		Q_PROPERTY(State state READ getState NOTIFY stateChanged)
+		Q_PROPERTY(QString errorMessage READ getErrorMessage NOTIFY errorMessageChanged)
 
 	public:
-		Handler(Engine* engine, std::unique_ptr<IOBase> io);
-		Handler(Handler&&) = default;
+		enum State
+		{
+			Stopped,
+			Started,
+			Failed,
+		};
+		Q_ENUM(State)
+
+		Handler(Engine* engine, std::shared_ptr<IOBase> io);
 		~Handler() override;
-		Handler(const Handler&) = delete;
-		Handler& operator=(const Handler&) = delete;
 
-		const std::unique_ptr<IOBase>& io() const;
-		Q_SLOT void start();
-		Q_SLOT void stop();
+		std::shared_ptr<IOBase> io() const;
 
-	signals:
-		void started();
-		void finished();
+		State getState() const;
+		void setState(State state);
+
+		QString getErrorMessage() const;
+		void setErrorMessage(const QString& message);
+
+	public Q_SLOTS:
+		void start();
+		void stop();
+
+	private Q_SLOTS:
+		void onStarted();
+		void onStartupErrorOccured(const QString& errorMessage);
+		void onErrorOccured(const QString& errorMessage);
+
+	Q_SIGNALS:
+		void stateChanged();
+		void errorMessageChanged();
 
 	private:
-		Q_SLOT void onStarted();
-		Q_SLOT void onStartupErrorOccured(const QString& errorMessage);
-		Q_SLOT void onErrorOccured(const QString& errorMessage);
+		friend class Engine;
 
 		Engine* m_engine = nullptr;
-		std::unique_ptr<IOBase> m_io;
+		std::shared_ptr<IOBase> m_io;
 
-		friend class Engine;
+		State m_state = State::Stopped;
+		QString m_errorMessage;
 	};
 }

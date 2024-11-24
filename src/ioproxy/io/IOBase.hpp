@@ -85,7 +85,7 @@ public:
 		return m_statistic;
 	}
 
-public slots:
+public Q_SLOTS:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual void writeData(const DataPack&) {}
@@ -101,34 +101,4 @@ protected:
 	QString m_uniqueName;
 	bool m_useRawData = true;
 	Statistic m_statistic;
-};
-
-class IOParameterDefinition
-{
-public:
-	enum DataType
-	{
-		INT8,
-		INT16,
-		INT32,
-		INT64,
-		STRING,
-	};
-
-	QString name;
-	DataType type = DataType::STRING;
-	bool required = false;
-	bool multi = false;
-};
-
-
-using IOParameters = QMultiMap<QString, QVariant>;
-
-
-class IOFactory
-{
-public:
-	virtual QString getID() const = 0;
-	virtual QList<IOParameterDefinition> getParameterDefinitions() const = 0;
-	virtual IOBase* create(const IOParameters& parameters);
 };

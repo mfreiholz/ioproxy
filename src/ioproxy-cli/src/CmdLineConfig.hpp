@@ -1,28 +1,23 @@
 #pragma once
-#include <ioproxy/Config.hpp>
+#include "Config.hpp"
+#include <tl/expected.hpp>
 
-namespace ioproxy
+class CmdLineConfig : public Config
 {
-	/// CmdLineConfig initializes a `Config` object from command line arguments.
-	/**
-	**/
-	class CmdLineConfig : public Config
-	{
-	public:
-		CmdLineConfig();
-		~CmdLineConfig() override;
-		CmdLineConfig(const CmdLineConfig&) = delete;
-		CmdLineConfig& operator=(const CmdLineConfig&) = delete;
+public:
+	CmdLineConfig();
+	~CmdLineConfig() override = default;
+	CmdLineConfig(const CmdLineConfig&) = delete;
+	CmdLineConfig& operator=(const CmdLineConfig&) = delete;
 
-		bool fromArguments(QStringList arguments);
-		QString usage() const;
+	tl::expected<void, QString> fromArguments(const QStringList& arguments);
+	QString usage() const;
 
-	private:
-		bool hasNext() const;
-		bool next(QString& value);
-		bool peekNext(QString& value);
+private:
+	bool hasNext() const;
+	bool next(QString& value);
+	bool peekNext(QString& value);
 
-		QStringList m_arguments;
-		int m_index = -1;
-	};
-}
+	QStringList m_arguments;
+	int m_index = -1;
+};

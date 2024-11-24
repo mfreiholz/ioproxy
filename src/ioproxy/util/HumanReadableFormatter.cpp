@@ -1,4 +1,4 @@
-#include <ioproxy/HumanReadableFormatter.hpp>
+#include "HumanReadableFormatter.hpp"
 
 QString HumanReadableFormatter::fileSize(qint64 size, int precision)
 {

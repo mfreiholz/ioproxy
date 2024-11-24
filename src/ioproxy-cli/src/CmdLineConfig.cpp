@@ -1,19 +1,17 @@
 #include "CmdLineConfig.hpp"
-#include <Qt>
 #include <iostream>
 #include <memory>
-using namespace ioproxy;
+//#include <Qt>
 
 CmdLineConfig::CmdLineConfig()
 	: Config()
 {}
 
-CmdLineConfig::~CmdLineConfig()
-{}
-
-bool CmdLineConfig::fromArguments(QStringList arguments)
+tl::expected<void, QString> CmdLineConfig::fromArguments(const QStringList& arguments)
 {
-	m_arguments = std::move(arguments);
+	m_arguments = arguments;
+	if (m_arguments.isEmpty())
+		return tl::make_unexpected(QString("Empty argument list."));
 
 	QString val;
 	std::unique_ptr<Config::IO> ioConfig;
@@ -66,20 +64,20 @@ bool CmdLineConfig::fromArguments(QStringList arguments)
 		{
 			if (!next(val))
 			{
-				std::cerr << "Missing value for -connect <source>,<destination>" << std::endl;
-				return false;
+				QString reason = QString("Missing value for -connect <source>,<destination>");
+				return tl::make_unexpected(reason);
 			}
 			const QStringList kv = val.split(',', Qt::SkipEmptyParts);
 			if (kv.size() != 2)
 			{
-				std::cerr << "Invalid syntax for -connection argument" << std::endl;
-				return false;
+				QString reason("Invalid syntax for -connection argument");
+				return tl::make_unexpected(reason);
 			}
-			m_connections.insert(kv[0].trimmed(), kv[1].trimmed());
+			m_connections.push_back(qMakePair(kv[0].trimmed(), kv[1].trimmed()));
 		}
 	}
 	add2config();
-	return true;
+	return {};
 }
 
 QString CmdLineConfig::usage() const

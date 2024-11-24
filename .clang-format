@@ -62,7 +62,6 @@ IndentCaseLabels: true
 #IndentPPDirectives: None
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-KeepEmptyLinesAtTheStartOfBlocks: true
 #JavaScriptQuotes: Single
 #JavaScriptWrapImports: false
 KeepEmptyLinesAtTheStartOfBlocks: false

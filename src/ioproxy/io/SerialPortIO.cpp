@@ -1,8 +1,3 @@
-#include <humblelogging/humblelogging.h>
-#include <ioproxy/io/SerialPortIO.hpp>
+#include "SerialPortIO.hpp"
 
-HUMBLE_LOGGER(L, "ioproxy.serialport");
-
-using namespace ioproxy;
-
-const QString SerialPortIO::TYPE = "serialport";
+HUMBLE_LOGGER(LL, "ioproxy.serialport");
