@@ -78,10 +78,17 @@ ioproxy-cli.exe {-io <type> -name <unique-name> [-p <key>=<value> ...] ...}
 #### Listen for UDP multicast and forward to clients connected to TCP Server
 ```
 # Windows Command Prompt
-ioproxy ^
+ioproxy-cli ^
 -io udpsocket -name mc_sock -p bind_socket=1234 -p remote_address=224.10.10.10 ^
 -io tcpserver -name tcp_server -p bind_port=5678 -p max_clients=10 ^
 -connect mc_sock,tcp_server
+```
+
+#### Listen for multiple TCP connections and forward data to STDOUT.
+```
+ioproxy-cli ^
+-io tcpserver -name tcp_server -p bind_port=5678 -p max_clients=10 ^
+-io_
 ```
 
 ## Input/Outputs

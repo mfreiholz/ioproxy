@@ -15,10 +15,33 @@ bool IOProxyConsoleApplication::handleSignal(os::Signal)
 	return true;
 }
 
+void IOProxyConsoleApplication::printCommandLineUsage() const
+{
+	printf("Usage: ioproxy-cli [-io <type>] [-name <uniqueName>]\n");
+	printf("\n");
+	printf("Available IO types:\n");
+	printf("\n");
+
+	const QMap<QString, IOFactoryBase*>& factories = m_engine->ioFactories();
+	for (auto it = factories.cbegin(); it != factories.cend(); ++it)
+	{
+		printf("\tType: %s\t", it.key().toStdString().c_str());
+		printf("\t\t");
+
+		QList<IOParaDef> defs = it.value()->getParameterDefinitions();
+		for (const IOParaDef& def : defs)
+		{
+		}
+	}
+}
+
 void IOProxyConsoleApplication::start()
 {
-	CmdLineConfig config;
-	auto ok = config.fromArguments(m_arguments);
+	tl::expected<void, QString> ok;
+
+	// Setup engine with IOs from config.
+	m_engine = new ioproxy::Engine(this);
+	ok = m_engine->registerBuiltIn();
 	if (!ok)
 	{
 		Q_EMIT errorOccurred(ok.error());
@@ -26,9 +49,9 @@ void IOProxyConsoleApplication::start()
 	}
 
 
-	// Setup engine with IOs from config.
-	m_engine = new ioproxy::Engine(this);
-	ok = m_engine->registerBuiltIn();
+	// Initialize from commandline.
+	CmdLineConfig config;
+	ok = config.fromArguments(m_arguments);
 	if (!ok)
 	{
 		Q_EMIT errorOccurred(ok.error());

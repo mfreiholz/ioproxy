@@ -33,8 +33,3 @@ install(
 	TARGETS ${name}
 	DESTINATION "bin"
 )
-
-#if(WIN32)
-#	include(Windeployqt)
-#	windeployqt(${name} ${INSTALL_BIN_PATH})
-#endif()

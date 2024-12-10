@@ -1,5 +1,5 @@
 @echo off
-set DebugOrRelease=Release
+set DebugOrRelease=Debug
 
 rem TCP & UDP core servers.
 rem These are the final servers which receives all data via proxies.

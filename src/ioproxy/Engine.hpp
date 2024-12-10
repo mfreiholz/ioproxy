@@ -26,6 +26,10 @@ namespace ioproxy
 
 		tl::expected<void, QString> addIO(std::shared_ptr<IOBase> io);
 		tl::expected<void, QString> addConnection(const QString& srcIO, const QString& dstIO);
+
+		const QMap<QString, IOFactoryBase*>& ioFactories() const { return m_ioFactories; }
+		const QList<Handler*>& handlers() const { return m_handlers; }
+
 		Statistic statisticSummary() const;
 
 	public Q_SLOTS:
@@ -35,11 +39,15 @@ namespace ioproxy
 	private:
 		friend class Handler;
 
+		// All known IO factories.
 		QMap<QString, IOFactoryBase*> m_ioFactories;
-		QList<std::shared_ptr<Handler>> m_handlers;
 
+		// List of Handlers which manage the IOs added by "addIO()".
+		QList<Handler*> m_handlers;
+
+		// If "true", the initial call to "start()" has already been made.
 		bool m_started = false;
 
-		tl::expected<std::shared_ptr<Handler>, QString> getIOHandler(const QString& id) const;
+		tl::expected<Handler*, QString> getIOHandler(const QString& id) const;
 	};
 }

@@ -77,7 +77,7 @@ namespace ioproxy
 
 	tl::expected<void, QString> Engine::addIO(std::shared_ptr<IOBase> io)
 	{
-		std::shared_ptr<Handler> handler = std::make_shared<Handler>(this, io);
+		Handler* handler = new Handler(this, io);
 		if (m_started)
 		{
 			handler->start();
@@ -134,7 +134,7 @@ namespace ioproxy
 		m_started = false;
 	}
 
-	tl::expected<std::shared_ptr<Handler>, QString> Engine::getIOHandler(const QString& id) const
+	tl::expected<Handler*, QString> Engine::getIOHandler(const QString& id) const
 	{
 		for (auto it = m_handlers.cbegin(); it != m_handlers.cend(); it++)
 		{

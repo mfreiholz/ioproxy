@@ -26,8 +26,8 @@ public:
 		parameters = other.parameters;
 	}
 
-	DataPack(const QByteArray& data_)
-		: bytes(data_)
+	DataPack(const QByteArray& data)
+		: bytes(data)
 	{}
 
 	~DataPack() = default;
@@ -58,6 +58,7 @@ struct Statistic
 class IOBase : public QObject
 {
 	Q_OBJECT
+	Q_PROPERTY(QString uniqueName READ uniqueName CONSTANT)
 
 public:
 	IOBase()
@@ -73,10 +74,10 @@ public:
 
 	void setUniqueName(const QString& uniqueName)
 	{
-		Q_ASSERT(!uniqueName.isEmpty());
 		if (uniqueName != m_uniqueName)
 		{
 			m_uniqueName = uniqueName;
+			Q_EMIT uniqueNameChanged();
 		}
 	}
 
@@ -85,17 +86,18 @@ public:
 		return m_statistic;
 	}
 
-public Q_SLOTS:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual void writeData(const DataPack&) {}
 
-signals:
-	void started(); ///< Emitted if start was successful
-	void startupErrorOccured(const QString& errorString); ///< Emitted if start failed
+Q_SIGNALS:
+	void errorOccured(const QString& errorMessage);
+	void uniqueNameChanged();
+
+	void startupErrorOccured(const QString& errorString);
+	void started();
 
 	void newData(const DataPack& data);
-	void errorOccured(const QString& errorMessage);
 
 protected:
 	QString m_uniqueName;

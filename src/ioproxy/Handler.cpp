@@ -62,9 +62,11 @@ namespace ioproxy
 
 	void Handler::stop()
 	{
-		m_io->stop();
-		m_io->disconnect(this);
-		// @todo Revert everything done in start().
+		if (m_io)
+		{
+			m_io->stop();
+			m_io->disconnect(this);
+		}
 	}
 
 	void Handler::onStarted()

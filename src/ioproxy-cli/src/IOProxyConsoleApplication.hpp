@@ -17,6 +17,7 @@ class IOProxyConsoleApplication : public QObject, public os::SignalHandler
 public:
 	IOProxyConsoleApplication(const QStringList& arguments, QObject* parent = nullptr);
 	bool handleSignal(os::Signal) override;
+	void printCommandLineUsage() const;
 
 public Q_SLOTS:
 	void start();
