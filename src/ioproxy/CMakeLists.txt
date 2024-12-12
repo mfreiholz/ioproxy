@@ -17,6 +17,7 @@ set(headers
 #	io/FileWriterIO.hpp
 	io/SerialPortIO.hpp
 #	io/CompressionIO.hpp
+	io/WebSocketIO.hpp
 	io/WebSocketServerIO.hpp
 
 	os/ServiceRunner.hpp
@@ -39,6 +40,7 @@ set(sources
 #	io/FileWriterIO.cpp
 	io/SerialPortIO.cpp
 #	io/CompressionIO.cpp
+	io/WebSocketIO.cpp
 	io/WebSocketServerIO.cpp
 
 	os/SignalHandler.linux.cpp

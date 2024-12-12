@@ -7,6 +7,7 @@
 #include "io/TcpServerIO.hpp"
 #include "io/TcpSocketIO.hpp"
 #include "io/UdpSocketIO.hpp"
+#include "io/WebSocketServerIO.hpp"
 
 namespace ioproxy
 {
@@ -47,6 +48,10 @@ namespace ioproxy
 			return fail;
 
 		ioFactory = new UdpSocketIOFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
+
+		ioFactory = new WebSocketServerIOFactory();
 		if (!(fail = registerIOFactory(ioFactory)))
 			return fail;
 
