@@ -31,7 +31,7 @@ void WebSocketIO::stop()
 
 void WebSocketIO::writeData(const DataPack& data)
 {
-	if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState)
+	if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState || !m_socket->isValid())
 	{
 		return;
 	}

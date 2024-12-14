@@ -9,7 +9,7 @@ class IOBase;
 
 
 /*! Definition of a single parameter of a IOBase implementation. */
-struct IOParameterDefinition
+struct IOParaDef
 {
 public:
 	enum DataType
@@ -47,7 +47,7 @@ public:
 	// The default value.
 	QVariant defaultValue;
 };
-using IOParaDef = IOParameterDefinition;
+//using IOParaDef = IOParameterDefinition;
 
 
 /*!

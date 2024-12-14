@@ -30,8 +30,17 @@ public:
 		: bytes(data)
 	{}
 
+	//DataPack& operator=(const DataPack& other)
+	//{
+	//	bytes = other.bytes;
+	//	fixedSize = other.fixedSize;
+	//	timestamps = other.timestamps;
+	//	parameters = other.parameters;
+	//}
+
 	~DataPack() = default;
 
+public:
 	QByteArray bytes;
 	int fixedSize = 0;
 	QList<int64_t> timestamps;
@@ -93,10 +102,8 @@ public:
 Q_SIGNALS:
 	void errorOccured(const QString& errorMessage);
 	void uniqueNameChanged();
-
 	void startupErrorOccured(const QString& errorString);
 	void started();
-
 	void newData(const DataPack& data);
 
 protected:
