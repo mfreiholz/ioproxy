@@ -1,7 +1,7 @@
 # Qt Installation Path
-#if(WIN32)
-#	list(APPEND CMAKE_PREFIX_PATH "C:/Qt/6.6.1/msvc2019_64")
-#endif()
+if(WIN32)
+	list(APPEND CMAKE_PREFIX_PATH "C:/Qt/6.8.1/msvc2022_64")
+endif()
 
 find_package(
 	Qt6
