@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QString>
 #include <memory>
+#include <QPluginLoader>
+#include <QList>
+#include "ioproxy/PluginAPI.hpp"
 
 namespace ioproxy
 {
@@ -30,4 +33,7 @@ private:
 	QStringList m_arguments;
 	ioproxy::Engine* m_engine = nullptr;
 	ConsoleStatusPrinter* m_statusPrinter = nullptr;
+
+	QList<QPluginLoader*> m_pluginLoaders;
+	QList<PluginAPI*> m_pluginInstances;
 };

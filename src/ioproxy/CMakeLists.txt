@@ -6,6 +6,8 @@ set(headers
 	Engine.hpp
 	Handler.hpp
 	Version.hpp
+
+	include/${name}/PluginAPI.hpp
 	
 	io/IOBase.hpp
 	io/IOFactoryBase.hpp
@@ -55,6 +57,7 @@ target_sources(${name} PRIVATE ${headers})
 target_sources(${name} PRIVATE ${sources})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Files" FILES ${headers} ${sources})
 target_include_directories(${name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
+target_include_directories(${name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 target_link_libraries(
 	${name}

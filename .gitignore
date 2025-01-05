@@ -1,5 +1,4 @@
 build/
-/src/ioproxy/Version.hpp
 /src/ioproxy/include/Version.hpp
 
 ## Ignore Visual Studio temporary files, build results, and

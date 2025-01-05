@@ -2,6 +2,8 @@
 #include "CmdLineConfig.hpp"
 #include "ConsoleStatusPrinter.hpp"
 #include "ioproxy/Engine.hpp"
+#include <QDir>
+#include <QCoreApplication>
 
 IOProxyConsoleApplication::IOProxyConsoleApplication(const QStringList& arguments, QObject* parent)
 	: QObject(parent)
@@ -17,7 +19,7 @@ bool IOProxyConsoleApplication::handleSignal(os::Signal)
 
 void IOProxyConsoleApplication::printCommandLineUsage() const
 {
-	printf("Usage: ioproxy-cli [-io <type>] [-name <uniqueName>]\n");
+	printf("Usage: ioproxy-cli [[-io <type>] [-name <uniqueName>] [-p <key>=<value>]]\n");
 	printf("\n");
 	printf("Available IO types:\n");
 	printf("\n");
@@ -46,6 +48,55 @@ void IOProxyConsoleApplication::start()
 	{
 		Q_EMIT errorOccurred(ok.error());
 		return;
+	}
+
+
+	// Load dynamic plugins.
+	QDir pluginsDir = QDir(QCoreApplication::applicationDirPath());
+	const auto entryList = pluginsDir.entryList(QDir::Files);
+	for (const QString& fileName : entryList)
+	{
+		if (!fileName.endsWith(".dll", Qt::CaseInsensitive))
+			continue;
+
+		QPluginLoader* loader = new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
+		if (!loader->load())
+		{
+			Q_EMIT errorOccurred(QString("Can't load plugin: %1").arg(loader->errorString()));
+			return;
+		}
+
+		QObject* plugin = loader->instance();
+		PluginAPI* pluginAPI = nullptr;
+		if (!plugin || !(pluginAPI = qobject_cast<PluginAPI*>(plugin)))
+		{
+			Q_EMIT errorOccurred(QString("Can't access plugin instance: %1").arg(loader->errorString()));
+			return;
+		}
+
+		m_pluginLoaders.append(loader);
+		m_pluginInstances.append(pluginAPI);
+
+		// Register available factories from PluginAPI.
+		QString ioStr;
+		for (IOFactoryBase* f : pluginAPI->ioFactories())
+			ioStr.append(f->getID() + " ");
+		printf("\n");
+		printf("Loaded Plugin Information:\n");
+		printf("File:        %s\n", loader->fileName().toStdString().c_str());
+		printf("ID:          %s\n", pluginAPI->id().toStdString().c_str());
+		printf("Description: %s\n", pluginAPI->description().toStdString().c_str());
+		printf("Author:      %s\n", pluginAPI->author().toStdString().c_str());
+		printf("IOs:         %s\n", ioStr.toStdString().c_str());
+		for (IOFactoryBase* f : pluginAPI->ioFactories())
+		{
+			auto e = m_engine->registerIOFactory(f);
+			if (!e)
+			{
+				Q_EMIT errorOccurred(e.error());
+				return;
+			}
+		}
 	}
 
 

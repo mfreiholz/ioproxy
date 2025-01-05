@@ -25,8 +25,13 @@ include(thirdparty/Qt.cmake)
 include(thirdparty/humblelogging.cmake)
 include(thirdparty/tl-expected.cmake)
 
+# Base projects.
 add_subdirectory(src/ioproxy)
 add_subdirectory(src/ioproxy-cli)
+
+# Plugins.
+add_subdirectory(src/example-plugin)
+
 #add_subdirectory(src/ioproxy-gui)
 #add_subdirectory(src/ioproxy-gui-widgets)
 #add_subdirectory(src/ioproxy-serialports)
