@@ -70,3 +70,5 @@ target_link_libraries(
 		humblelogging
 		tl-expected
 )
+
+install(TARGETS ${name} DESTINATION lib)

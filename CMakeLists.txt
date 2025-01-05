@@ -30,7 +30,7 @@ add_subdirectory(src/ioproxy)
 add_subdirectory(src/ioproxy-cli)
 
 # Plugins.
-add_subdirectory(src/example-plugin)
+add_subdirectory(src/echo-plugin)
 
 #add_subdirectory(src/ioproxy-gui)
 #add_subdirectory(src/ioproxy-gui-widgets)

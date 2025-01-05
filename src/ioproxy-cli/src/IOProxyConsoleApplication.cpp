@@ -56,7 +56,7 @@ void IOProxyConsoleApplication::start()
 	const auto entryList = pluginsDir.entryList(QDir::Files);
 	for (const QString& fileName : entryList)
 	{
-		if (!fileName.endsWith(".dll", Qt::CaseInsensitive))
+		if (!fileName.endsWith(".ioplugin.dll", Qt::CaseInsensitive))
 			continue;
 
 		QPluginLoader* loader = new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
