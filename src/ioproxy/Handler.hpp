@@ -5,8 +5,6 @@
 
 namespace ioproxy
 {
-	class Engine;
-
 	/// Handler
 	/**
 		Handler manages the lifecycle and communication with the IOBase object.
@@ -16,8 +14,9 @@ namespace ioproxy
 	class Handler : public QObject
 	{
 		Q_OBJECT
-		Q_PROPERTY(State state READ getState NOTIFY stateChanged)
-		Q_PROPERTY(QString errorMessage READ getErrorMessage NOTIFY errorMessageChanged)
+		Q_PROPERTY(QString uniqueName READ uniqueName CONSTANT)
+		Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
+		Q_PROPERTY(QString errorMessage READ errorMessage WRITE setErrorMessage NOTIFY errorMessageChanged)
 
 	public:
 		enum State
@@ -28,37 +27,42 @@ namespace ioproxy
 		};
 		Q_ENUM(State)
 
-		Handler(Engine* engine, std::shared_ptr<IOBase> io);
+		Handler(std::shared_ptr<IOBase> io, QObject* parent);
 		~Handler() override;
 
-		std::shared_ptr<IOBase> io() const;
+		QString uniqueName() const;
 
-		State getState() const;
+		State state() const;
 		void setState(State state);
 
-		QString getErrorMessage() const;
+		QString errorMessage() const;
 		void setErrorMessage(const QString& message);
+
+		qint64 bytesWritten() const;
+		qint64 bytesRead() const;
 
 	public Q_SLOTS:
 		void start();
 		void stop();
+		void writeData(const DataPack& data);
 
 	private Q_SLOTS:
 		void onStarted();
 		void onStartupErrorOccured(const QString& errorMessage);
 		void onErrorOccured(const QString& errorMessage);
+		void onNewData(const DataPack& data);
 
 	Q_SIGNALS:
 		void stateChanged();
 		void errorMessageChanged();
+		void newData(const DataPack& data);
 
 	private:
-		friend class Engine;
-
-		Engine* m_engine = nullptr;
 		std::shared_ptr<IOBase> m_io;
-
 		State m_state = State::Stopped;
 		QString m_errorMessage;
+
+		qint64 m_bytesWritten = 0;
+		qint64 m_bytesRead = 0;
 	};
 }
