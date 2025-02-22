@@ -1,35 +1,25 @@
-set(name "ioproxy-cli")
 qt_standard_project_setup()
+set(name "ioproxy-cli")
+set(src_root "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-set(headers
-	src/Config.hpp
-	src/CmdLineConfig.hpp
-	src/ConsoleStatusPrinter.hpp
-	src/IOProxyConsoleApplication.hpp
-)
+set(files
+	"${src_root}/CmdLineConfig.cpp"
+	"${src_root}/CmdLineConfig.hpp"
 
-set(sources
-	src/Config.cpp
-	src/CmdLineConfig.cpp
-	src/ConsoleStatusPrinter.cpp
-	src/IOProxyConsoleApplication.cpp
-	src/Main.cpp
+	"${src_root}/Config.cpp"
+	"${src_root}/Config.hpp"
+	
+	"${src_root}/ConsoleStatusPrinter.cpp"
+	"${src_root}/ConsoleStatusPrinter.hpp"
+
+	"${src_root}/IOProxyConsoleApplication.cpp"
+	"${src_root}/IOProxyConsoleApplication.hpp"
+	
+	"${src_root}/Main.cpp"
 )
 
 add_executable(${name})
-target_sources(${name} PRIVATE ${headers})
-target_sources(${name} PRIVATE ${sources})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Files" FILES ${headers} ${sources})
-
-target_link_libraries(
-	${name}
-	PRIVATE
-		Qt6::Core
-		humblelogging
-		ioproxy
-)
-
-install(
-	TARGETS ${name}
-	DESTINATION "bin"
-)
+target_sources(${name} PRIVATE ${files})
+source_group(TREE ${src_root} PREFIX "SOURCES" FILES ${files})
+target_link_libraries(${name} PRIVATE ioproxy)
+install(TARGETS ${name} DESTINATION "bin")

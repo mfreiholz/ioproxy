@@ -1,61 +1,63 @@
 qt_standard_project_setup()
 set(name "ioproxy")
 
-set(headers
-	Global.hpp
-	Engine.hpp
-	Handler.hpp
-	Version.hpp
+set(files
+	"Engine.hpp"
+	"Engine.cpp"
+	"Global.hpp"
+	"Handler.cpp"
+	"Handler.hpp"
+	"Version.hpp"
 
-	include/${name}/PluginAPI.hpp
+	"io/ByteGenerator/ByteGeneratorIO.cpp"
+	"io/ByteGenerator/ByteGeneratorIO.hpp"
+	"io/ByteGenerator/ByteGeneratorFactory.cpp"
+	"io/ByteGenerator/ByteGeneratorFactory.hpp"
+
+	"io/IOBase.hpp"
+
+	"io/IOFactoryBase.cpp"
+	"io/IOFactoryBase.hpp"
+
+	"io/SerialPortIO.cpp"
+	"io/SerialPortIO.hpp"
+
+	"io/StdOutIO.cpp"
+	"io/StdOutIO.hpp"
 	
-	io/IOBase.hpp
-	io/IOFactoryBase.hpp
-	io/TcpServerIO.hpp
-	io/TcpSocketIO.hpp
-	io/UdpSocketIO.hpp
-	io/StdOutIO.hpp
-#	io/FileReaderIO.hpp
-#	io/FileWriterIO.hpp
-	io/SerialPortIO.hpp
-#	io/CompressionIO.hpp
-	io/WebSocketIO.hpp
-	io/WebSocketServerIO.hpp
-
-	os/ServiceRunner.hpp
-	os/SignalHandler.hpp
-
-	util/HumanReadableFormatter.hpp
-	util/Util.hpp
-)
-
-set(sources
-	Engine.cpp
-	Handler.cpp
+	"io/TcpServerIO.cpp"
+	"io/TcpServerIO.hpp"
 	
-	io/IOFactoryBase.cpp
-	io/TcpServerIO.cpp
-	io/TcpSocketIO.cpp
-	io/UdpSocketIO.cpp
-	io/StdOutIO.cpp
-#	io/FileReaderIO.cpp
-#	io/FileWriterIO.cpp
-	io/SerialPortIO.cpp
-#	io/CompressionIO.cpp
-	io/WebSocketIO.cpp
-	io/WebSocketServerIO.cpp
+	"io/TcpSocketIO.cpp"
+	"io/TcpSocketIO.hpp"
 
-	os/SignalHandler.linux.cpp
-	os/SignalHandler.win32.cpp
+	"io/UdpSocketIO.cpp"
+	"io/UdpSocketIO.hpp"
+	
+	"io/WebSocketIO.cpp"
+	"io/WebSocketIO.hpp"
+	
+	"io/WebSocketServerIO.cpp"
+	"io/WebSocketServerIO.hpp"
+	
+	"os/ServiceRunner.hpp"
+	
+	"os/SignalHandler.linux.cpp"
+	"os/SignalHandler.win32.cpp"
+	"os/SignalHandler.hpp"
 
-	util/HumanReadableFormatter.cpp
-	util/Util.cpp
+	"sdk/ioproxy-plugin-sdk.hpp"
+	
+	"util/HumanReadableFormatter.cpp"
+	"util/HumanReadableFormatter.hpp"
+	
+	"util/Util.cpp"
+	"util/Util.hpp"
 )
 
 add_library(${name} STATIC)
-target_sources(${name} PRIVATE ${headers})
-target_sources(${name} PRIVATE ${sources})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Files" FILES ${headers} ${sources})
+target_sources(${name} PRIVATE ${files})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "SOURCES" FILES ${files})
 target_include_directories(${name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 target_include_directories(${name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

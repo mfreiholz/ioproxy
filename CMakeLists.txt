@@ -9,6 +9,8 @@ project(
 	LANGUAGES CXX
 )
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_policy(SET CMP0174 OLD)
 
 # Generate version.hpp
@@ -17,23 +19,11 @@ configure_file(
 	${PROJECT_SOURCE_DIR}/src/ioproxy/Version.hpp
 )
 
-# Compiler Settings.
-include(cmake/Compiler.cmake)
-
 # Third party libraries.
 include(thirdparty/Qt.cmake)
 include(thirdparty/humblelogging.cmake)
 include(thirdparty/tl-expected.cmake)
 
-# Base projects.
+# Source.
 add_subdirectory(src/ioproxy)
 add_subdirectory(src/ioproxy-cli)
-
-# Plugins.
-add_subdirectory(src/echo-plugin)
-
-#add_subdirectory(src/ioproxy-gui)
-#add_subdirectory(src/ioproxy-gui-widgets)
-#add_subdirectory(src/ioproxy-serialports)
-#add_subdirectory(src/tcpsocket-data-gen)
-#add_subdirectory(src/udpsocket-data-gen)

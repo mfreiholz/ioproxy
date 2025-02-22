@@ -5,13 +5,11 @@ HUMBLE_LOGGER(LL, "ioproxy");
 
 namespace ioproxy
 {
-	Handler::Handler(Engine* engine, std::shared_ptr<IOBase> io)
-		: m_engine(engine)
+	Handler::Handler(std::shared_ptr<IOBase> io, QObject* parent)
+		: QObject(parent)
 		, m_io(io)
 	{
-		// @todo If it should be possible to run IO in a separate thread,
-		// we need to move it to the thread right here, bevore we connect
-		// any signal/slots.
+		QObject::connect(m_io.get(), &IOBase::newData, this, &Handler::onNewData);
 	}
 
 	Handler::~Handler()
@@ -19,12 +17,12 @@ namespace ioproxy
 		stop();
 	}
 
-	std::shared_ptr<IOBase> Handler::io() const
+	QString Handler::uniqueName() const
 	{
-		return m_io;
+		return m_io->uniqueName();
 	}
 
-	Handler::State ioproxy::Handler::getState() const
+	Handler::State Handler::state() const
 	{
 		return m_state;
 	}
@@ -38,7 +36,7 @@ namespace ioproxy
 		}
 	}
 
-	QString Handler::getErrorMessage() const
+	QString Handler::errorMessage() const
 	{
 		return m_errorMessage;
 	}
@@ -50,6 +48,16 @@ namespace ioproxy
 			m_errorMessage = message;
 			Q_EMIT errorMessageChanged();
 		}
+	}
+
+	qint64 Handler::bytesWritten() const
+	{
+		return m_bytesWritten;
+	}
+
+	qint64 Handler::bytesRead() const
+	{
+		return m_bytesRead;
 	}
 
 	void Handler::start()
@@ -69,11 +77,21 @@ namespace ioproxy
 		}
 	}
 
+	void Handler::writeData(const DataPack& data)
+	{
+		if (m_state != Started)
+			return;
+
+		m_io->writeData(data);
+
+		m_bytesWritten += data.bytes.count();
+	}
+
 	void Handler::onStarted()
 	{
 		HL_INFO(LL, QString("IO started (name=%1)").arg(m_io->uniqueName()).toStdString());
-		setState(State::Started);
 		setErrorMessage({});
+		setState(State::Started);
 	}
 
 	void Handler::onStartupErrorOccured(const QString& errorMessage)
@@ -88,5 +106,11 @@ namespace ioproxy
 		HL_ERROR(LL, QString("IO error (name=%1) -> %2").arg(m_io->uniqueName()).arg(errorMessage).toStdString());
 		setErrorMessage(errorMessage);
 		setState(State::Failed);
+	}
+
+	void Handler::onNewData(const DataPack& data)
+	{
+		m_bytesRead += data.bytes.count();
+		Q_EMIT newData(data);
 	}
 }

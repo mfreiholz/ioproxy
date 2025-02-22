@@ -88,7 +88,8 @@ ioproxy-cli ^
 ```
 ioproxy-cli ^
 -io tcpserver -name tcp_server -p bind_port=5678 -p max_clients=10 ^
--io_
+-io stdout -name cout ^
+-connect tcpserver,cout
 ```
 
 ## Input/Outputs

@@ -2,6 +2,7 @@
 #include <QHostAddress>
 #include <QMetaType>
 
+#include "io/ByteGenerator/ByteGeneratorFactory.hpp"
 #include "io/SerialPortIO.hpp"
 #include "io/StdOutIO.hpp"
 #include "io/TcpServerIO.hpp"
@@ -31,6 +32,10 @@ namespace ioproxy
 	{
 		tl::expected<void, QString> fail;
 		IOFactoryBase* ioFactory = nullptr;
+
+		ioFactory = new ByteGeneratorFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
 
 		ioFactory = new SerialPortIOFactory();
 		if (!(fail = registerIOFactory(ioFactory)))
@@ -87,7 +92,7 @@ namespace ioproxy
 
 	tl::expected<void, QString> Engine::addIO(std::shared_ptr<IOBase> io)
 	{
-		Handler* handler = new Handler(this, io);
+		Handler* handler = new Handler(io, this);
 		if (m_started)
 		{
 			handler->start();
@@ -108,7 +113,7 @@ namespace ioproxy
 
 		auto src = eSrc.value();
 		auto dst = eDst.value();
-		QObject::connect(src->io().get(), &IOBase::newData, dst->io().get(), &IOBase::writeData);
+		QObject::connect(src, &Handler::newData, dst, &Handler::writeData);
 		return {};
 	}
 
@@ -117,9 +122,8 @@ namespace ioproxy
 		Statistic sum;
 		for (const auto& h : m_handlers)
 		{
-			const auto& stats = h->m_io->statistic();
-			sum.bytesRead += stats.bytesRead;
-			sum.bytesWritten += stats.bytesWritten;
+			sum.bytesRead += h->bytesRead();
+			sum.bytesWritten += h->bytesWritten();
 		}
 		return sum;
 	}
@@ -148,7 +152,7 @@ namespace ioproxy
 	{
 		for (auto it = m_handlers.cbegin(); it != m_handlers.cend(); it++)
 		{
-			if ((*it)->io()->uniqueName().compare(id, Qt::CaseInsensitive) == 0)
+			if ((*it)->uniqueName().compare(id, Qt::CaseInsensitive) == 0)
 			{
 				return *it;
 			}

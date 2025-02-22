@@ -27,7 +27,4 @@ public:
 	QString getID() const override;
 	QList<IOParaDef> getParameterDefinitions() const override;
 	tl::expected<IOBase*, QString> create(const IOParameters& parameters);
-
-private:
-	QList<IOParaDef> m_paraDefs;
 };
