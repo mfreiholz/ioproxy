@@ -9,6 +9,11 @@ set(files
 	"Handler.hpp"
 	"Version.hpp"
 
+	"io/ByteGenerator/ByteGeneratorIO.cpp"
+	"io/ByteGenerator/ByteGeneratorIO.hpp"
+	"io/ByteGenerator/ByteGeneratorFactory.cpp"
+	"io/ByteGenerator/ByteGeneratorFactory.hpp"
+
 	"io/IOBase.hpp"
 
 	"io/IOFactoryBase.cpp"

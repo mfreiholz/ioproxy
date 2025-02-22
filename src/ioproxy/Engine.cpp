@@ -2,6 +2,7 @@
 #include <QHostAddress>
 #include <QMetaType>
 
+#include "io/ByteGenerator/ByteGeneratorFactory.hpp"
 #include "io/SerialPortIO.hpp"
 #include "io/StdOutIO.hpp"
 #include "io/TcpServerIO.hpp"
@@ -31,6 +32,10 @@ namespace ioproxy
 	{
 		tl::expected<void, QString> fail;
 		IOFactoryBase* ioFactory = nullptr;
+
+		ioFactory = new ByteGeneratorFactory();
+		if (!(fail = registerIOFactory(ioFactory)))
+			return fail;
 
 		ioFactory = new SerialPortIOFactory();
 		if (!(fail = registerIOFactory(ioFactory)))
