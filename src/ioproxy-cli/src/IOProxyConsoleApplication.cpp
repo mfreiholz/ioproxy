@@ -2,8 +2,8 @@
 #include "CmdLineConfig.hpp"
 #include "ConsoleStatusPrinter.hpp"
 #include "ioproxy/Engine.hpp"
-#include <QDir>
 #include <QCoreApplication>
+#include <QDir>
 
 IOProxyConsoleApplication::IOProxyConsoleApplication(const QStringList& arguments, QObject* parent)
 	: QObject(parent)
@@ -40,6 +40,15 @@ void IOProxyConsoleApplication::printCommandLineUsage() const
 void IOProxyConsoleApplication::start()
 {
 	tl::expected<void, QString> ok;
+
+	// Initialize from commandline.
+	CmdLineConfig config;
+	ok = config.fromArguments(m_arguments);
+	if (!ok)
+	{
+		Q_EMIT errorOccurred(ok.error());
+		return;
+	}
 
 	// Setup engine with IOs from config.
 	m_engine = new ioproxy::Engine(this);
@@ -97,16 +106,6 @@ void IOProxyConsoleApplication::start()
 				return;
 			}
 		}
-	}
-
-
-	// Initialize from commandline.
-	CmdLineConfig config;
-	ok = config.fromArguments(m_arguments);
-	if (!ok)
-	{
-		Q_EMIT errorOccurred(ok.error());
-		return;
 	}
 
 

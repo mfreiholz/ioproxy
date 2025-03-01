@@ -3,7 +3,7 @@ string(TIMESTAMP UNIX_TIMESTAMP "%s" UTC)
 
 project(
 	IO_Proxy_Project
-	VERSION 1.0.0.${UNIX_TIMESTAMP}
+	VERSION 1.0.0
 	DESCRIPTION ""
 	HOMEPAGE_URL "https://github.com/mfreiholz/ioproxy"
 	LANGUAGES CXX

@@ -4,6 +4,7 @@
 #include "ioproxy/Version.hpp"
 #include <QtCore/QCoreApplication>
 #include <humblelogging/humblelogging.h>
+#include <iostream>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -23,7 +24,7 @@ void initLogging()
 void printAppInfoHeader()
 {
 	auto qapp = QCoreApplication::instance();
-	//std::cout << qapp->applicationName().toStdString() << " " << qapp->applicationVersion().toStdString() << std::endl;
+	std::cout << qapp->applicationName().toStdString() << " " << qapp->applicationVersion().toStdString() << std::endl;
 }
 
 int main(int argc, char* argv[])
